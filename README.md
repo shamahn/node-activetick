@@ -1,4 +1,4 @@
 node-activetick-addon
 =====================
 
-ActiveTick addon for Node.js
+ActiveTick API addon for Node.js
