@@ -34,8 +34,30 @@ Requestor::~Requestor(void)
     JSONNode n( JSON_NODE );
     n.push_back( JSONNode( "messageId", "atBarHistory" ) );
     n.push_back( JSONNode( "origRequest", origRequest ) );
-    n.push_back( JSONNode( "responseType", responseType ) );
-    n.push_back( jsonifyAtBarHistory( pResponse ) );
+
+    string strResponseType;
+    switch(responseType)
+    {
+    case BarHistoryResponseSuccess: strResponseType = "BarHistoryResponseSuccess"; break;
+    case BarHistoryResponseInvalidRequest: strResponseType = "BarHistoryResponseInvalidRequest"; break;
+    case BarHistoryResponseMaxLimitReached: strResponseType = "BarHistoryResponseMaxLimitReached"; break;
+    case BarHistoryResponseDenied: strResponseType = "BarHistoryResponseDenied"; break;
+    default: break;
+    }
+
+    JSONNode resp( JSON_NODE );
+    resp.set_name( "response" );
+    resp.push_back( JSONNode( "name", "ATBarHistoryResponseType" ) );
+    resp.push_back( JSONNode( "enum", responseType ) );
+    resp.push_back( JSONNode( "type", strResponseType ) );
+
+    JSONNode data( JSON_NODE );
+    data.set_name( "data" );
+    data.push_back( jsonifyAtBarHistory( pResponse ) );
+
+    resp.push_back( data );
+
+    n.push_back( resp );
     m_pInboundMsgs->push( n );
 }
 
@@ -44,14 +66,7 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
 
     JSONNode n( JSON_NODE );
     n.set_name( "atBarHistory" );
-
-    JSONNode s( JSON_NODE );
-    s.set_name( "atSymbol" );
-    s.push_back( JSONNode( "symbol", parser.GetSymbol()->symbol ) );
-    s.push_back( JSONNode( "symbolType", parser.GetSymbol()->symbolType ) );
-    s.push_back( JSONNode( "exchangeType", parser.GetSymbol()->exchangeType ) );
-    s.push_back( JSONNode( "countryType", parser.GetSymbol()->countryType ) );
-    n.push_back( s );
+    n.push_back( m_jsonifier.jsonifyAtSymbol( parser.GetSymbol() ) );
     n.push_back( JSONNode( "recordsCount", parser.GetRecordCount() ) );
 
     if(parser.MoveToFirstRecord())
@@ -110,10 +125,10 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
     JSONNode n( JSON_NODE );
     n.push_back( JSONNode( "messageId", "atSectorList" ) );
     n.push_back( JSONNode( "origRequest", origRequest ) );
-    n.push_back( JSONNode( "recordsCount", recordsCount ) );
+    n.push_back( JSONNode( "count", recordsCount ) );
 
     JSONNode list( JSON_ARRAY );
-    list.set_name( "atSectorList" );
+    list.set_name( "data" );
     for(uint32_t i = 0; i < recordsCount; ++i) {
         JSONNode item( JSON_NODE );
         item.push_back( JSONNode( "sector", Helper::ConvertString(
@@ -132,10 +147,10 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
     JSONNode n( JSON_NODE );
     n.push_back( JSONNode( "messageId", "atConstituentList" ) );
     n.push_back( JSONNode( "origRequest", origRequest ) );
-    n.push_back( JSONNode( "sumbolsCount", symbolsCount ) );
+    n.push_back( JSONNode( "count", symbolsCount ) );
     
     JSONNode list( JSON_ARRAY );
-    list.set_name( "atConstituentList" );
+    list.set_name( "data" );
     for(uint32_t i = 0; i < symbolsCount; ++i) {
         JSONNode symbol( JSON_NODE );
         symbol.push_back( JSONNode( "symbol", Helper::ConvertString(
@@ -154,7 +169,130 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
                                     uint64_t origRequest,
                                     ATTickHistoryResponseType responseType,
                                     LPATTICKHISTORY_RESPONSE pResponse ) {
+    JSONNode n( JSON_NODE );
+    n.push_back( JSONNode( "messageId", "atTickHistory" ) );
+    n.push_back( JSONNode( "origRequest", origRequest ) );
+
+    string strResponseType;
+    switch(responseType)
+    {
+    case TickHistoryResponseSuccess: strResponseType = "TickHistoryResponseSuccess"; break;
+    case TickHistoryResponseInvalidRequest: strResponseType = "TickHistoryResponseInvalidRequest"; break;
+    case TickHistoryResponseMaxLimitReached: strResponseType = "TickHistoryResponseMaxLimitReached"; break;
+    case TickHistoryResponseDenied: strResponseType = "TickHistoryResponseDenied"; break;
+    default: break;
+    }
+    JSONNode resp( JSON_NODE );
+    resp.set_name( "response" );
+    resp.push_back( JSONNode( "name", "ATTickHistoryResponseType" ) );
+    resp.push_back( JSONNode( "enum", responseType ) );
+    resp.push_back( JSONNode( "type", strResponseType ) );
+
+    JSONNode data( JSON_NODE );
+    data.set_name( "data" );
+    data.push_back( jsonifyAtTickHistory( pResponse ) );
+
+    resp.push_back( data );
+
+    n.push_back( resp );
+    m_pInboundMsgs->push( n );
+
+    if( pResponse->nextOffset != 0xffffffffffffffffULL &&
+        pResponse->nextOffset != 0xfffffffffffffff0ULL &&
+        pResponse->nextOffset != 0 )
+        SendATTickHistoryDbRequest( pResponse->symbol, true, true, 10, pResponse->nextOffset, pResponse->offsetDatabaseDate, DEFAULT_REQUEST_TIMEOUT);
+
 }
+
+JSONNode Requestor::jsonifyAtTickHistory( LPATTICKHISTORY_RESPONSE pResponse ) {
+    ATTickHistoryDBResponseParser parser(pResponse);
+
+    JSONNode n( JSON_NODE );
+    n.set_name( "atTickHistory" );
+    n.push_back( m_jsonifier.jsonifyAtSymbol( parser.GetSymbol() ) );
+    n.push_back( jsonifyAtSymbolStatus( parser.GetSymbolStatus() ) );
+    n.push_back( JSONNode( "recordCount", parser.GetRecordCount() ) );
+    n.push_back( JSONNode( "nextOffset", parser.GetNextOffset() ) );
+    ATTIME offsetDatabaseDate = parser.GetOffsetDbDate();
+    n.push_back( m_jsonifier.jsonifyAtTime( "offsetDatabaseDate",
+                                            &offsetDatabaseDate ) );
+
+    if( parser.MoveToFirstRecord() ) {
+        JSONNode c( JSON_ARRAY );
+        c.set_name( "records" );
+        while(true) {
+            ATTIME recordDateTime = parser.GetRecordDateTime();
+            c.push_back( m_jsonifier.jsonifyAtTime( "tickTime",
+                                                    &recordDateTime ) );
+            switch( parser.GetRecordType() )
+            {
+            case TickHistoryRecordTrade:
+                {
+                JSONNode last( JSON_NODE );
+                last.set_name( "tradeLastPrice" );
+                last.push_back( JSONNode( "precision",
+                                    parser.GetTradeLastPrice().precision ) );
+                last.push_back( JSONNode( "price",
+                                    parser.GetTradeLastPrice().price ) );
+                c.push_back( last );
+                c.push_back( JSONNode( "tradeLastSize", parser.GetTradeLastSize() ) );
+                c.push_back( JSONNode( "tradeLastExchange", parser.GetTradeLastExchange() ) );
+                c.push_back( JSONNode( "tradeCondition", parser.GetTradeCondition(0) ) );
+                }
+                break;
+            case TickHistoryRecordQuote:
+                {
+                JSONNode bid( JSON_NODE );
+                bid.set_name( "quoteBidPrice" );
+                bid.push_back( JSONNode( "precision",
+                                   parser.GetQuoteBidPrice().precision ) );
+                bid.push_back( JSONNode( "price",
+                                   parser.GetQuoteBidPrice().price ) );
+                c.push_back( bid );
+                JSONNode ask( JSON_NODE );
+                ask.set_name( "quoteAskPrice" );
+                ask.push_back( JSONNode( "precision",
+                                   parser.GetQuoteAskPrice().precision ) );
+                ask.push_back( JSONNode( "price",
+                                   parser.GetQuoteAskPrice().price ) );
+                c.push_back( ask );
+                c.push_back( JSONNode( "quoteBidSize", parser.GetQuoteBidSize() ) );
+                c.push_back( JSONNode( "quoteAskSize", parser.GetQuoteAskSize() ) );
+                c.push_back( JSONNode( "quoteBidExchange", parser.GetQuoteBidExchange() ) );
+                c.push_back( JSONNode( "quoteAskExchange", parser.GetQuoteAskExchange() ) );
+                c.push_back( JSONNode( "quoteCondition", parser.GetQuoteCondition() ) );
+                }
+                break;
+            default:
+                break;
+            }
+            if(parser.MoveToNextRecord() == false)
+                break;
+            
+        }
+        n.push_back( c );
+    }
+    return n;
+}
+
+JSONNode Requestor::jsonifyAtSymbolStatus( ATSymbolStatus status ) {
+    string strStatusType;
+    switch(status)
+    {
+    case SymbolStatusSuccess: strStatusType = "SymbolStatusSuccess"; break;
+    case SymbolStatusInvalid: strStatusType = "SymbolStatusInvalid"; break;
+    case SymbolStatusUnavailable: strStatusType = "SymbolStatusUnavailable"; break;
+    case SymbolStatusNoPermission: strStatusType = "SymbolStatusNoPermission"; break;
+    default: break;
+    }
+    JSONNode n( JSON_NODE );
+    n.set_name( "status" );
+    n.push_back( JSONNode( "name", "ATSymbolStatus" ) );
+    n.push_back( JSONNode( "enum", status ) );
+    n.push_back( JSONNode( "type", strStatusType ) );
+    return n;
+}
+
 
 /*virtual*/ void Requestor::OnATMarketMoversDbResponse(
                                     uint64_t origRequest,

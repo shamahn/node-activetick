@@ -12,5 +12,6 @@ public:
 
 public:
     static JSONNode jsonifyAtTime( std::string name, LPATTIME pServerTime );
+    static JSONNode jsonifyAtSymbol( LPATSYMBOL pSymbol );
 
 };
