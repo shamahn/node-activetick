@@ -190,26 +190,101 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
 
     JSONNode data( JSON_NODE );
     data.set_name( "data" );
-    // TODO: jsonify the data and push back
+    data.push_back( jsonifyAtTickHistory( pResponse ) );
 
-
-    //
     resp.push_back( data );
-    //
+
     n.push_back( resp );
-
     m_pInboundMsgs->push( n );
-
-
 }
 
-JSONNode jsonifyAtTickHistory( LPATTICKHISTORY_RESPONSE pResponse ) {
+JSONNode Requestor::jsonifyAtTickHistory( LPATTICKHISTORY_RESPONSE pResponse ) {
     ATTickHistoryDBResponseParser parser(pResponse);
 
     JSONNode n( JSON_NODE );
     n.set_name( "atTickHistory" );
+    n.push_back( m_jsonifier.jsonifyAtSymbol( parser.GetSymbol() ) );
+    n.push_back( jsonifyAtSymbolStatus( parser.GetSymbolStatus() ) );
+    n.push_back( JSONNode( "recordCount", parser.GetRecordCount() ) );
+    n.push_back( JSONNode( "nextOffset", parser.GetNextOffset() ) );
+    ATTIME offsetDatabaseDate = parser.GetOffsetDbDate();
+    n.push_back( m_jsonifier.jsonifyAtTime( "offsetDatabaseDate",
+                                            &offsetDatabaseDate ) );
 
+    if( parser.MoveToFirstRecord() ) {
+        JSONNode c( JSON_ARRAY );
+        c.set_name( "records" );
+        while(true) {
+            ATTIME recordDateTime = parser.GetRecordDateTime();
+            c.push_back( m_jsonifier.jsonifyAtTime( "tickTime",
+                                                    &recordDateTime ) );
+            switch( parser.GetRecordType() )
+            {
+            case TickHistoryRecordTrade:
+                {
+                JSONNode last( JSON_NODE );
+                last.set_name( "tradeLastPrice" );
+                last.push_back( JSONNode( "precision",
+                                    parser.GetTradeLastPrice().precision ) );
+                last.push_back( JSONNode( "price",
+                                    parser.GetTradeLastPrice().price ) );
+                c.push_back( last );
+                c.push_back( JSONNode( "tradeLastSize", parser.GetTradeLastSize() ) );
+                c.push_back( JSONNode( "tradeLastExchange", parser.GetTradeLastExchange() ) );
+                c.push_back( JSONNode( "tradeCondition", parser.GetTradeCondition(0) ) );
+                }
+                break;
+            case TickHistoryRecordQuote:
+                {
+                JSONNode bid( JSON_NODE );
+                bid.set_name( "quoteBidPrice" );
+                bid.push_back( JSONNode( "precision",
+                                   parser.GetQuoteBidPrice().precision ) );
+                bid.push_back( JSONNode( "price",
+                                   parser.GetQuoteBidPrice().price ) );
+                c.push_back( bid );
+                JSONNode ask( JSON_NODE );
+                ask.set_name( "quoteAskPrice" );
+                ask.push_back( JSONNode( "precision",
+                                   parser.GetQuoteAskPrice().precision ) );
+                ask.push_back( JSONNode( "price",
+                                   parser.GetQuoteAskPrice().price ) );
+                c.push_back( ask );
+                c.push_back( JSONNode( "quoteBidSize", parser.GetQuoteBidSize() ) );
+                c.push_back( JSONNode( "quoteAskSize", parser.GetQuoteAskSize() ) );
+                c.push_back( JSONNode( "quoteBidExchange", parser.GetQuoteBidExchange() ) );
+                c.push_back( JSONNode( "quoteAskExchange", parser.GetQuoteAskExchange() ) );
+                c.push_back( JSONNode( "quoteCondition", parser.GetQuoteCondition() ) );
+                }
+                break;
+            default:
+                break;
+            }
+            if(parser.MoveToNextRecord() == false)
+                break;
+            
+        }
+        n.push_back( c );
+    }
+    return n;
+}
 
+JSONNode Requestor::jsonifyAtSymbolStatus( ATSymbolStatus status ) {
+    string strStatusType;
+    switch(status)
+    {
+    case SymbolStatusSuccess: strStatusType = "SymbolStatusSuccess"; break;
+    case SymbolStatusInvalid: strStatusType = "SymbolStatusInvalid"; break;
+    case SymbolStatusUnavailable: strStatusType = "SymbolStatusUnavailable"; break;
+    case SymbolStatusNoPermission: strStatusType = "SymbolStatusNoPermission"; break;
+    default: break;
+    }
+    JSONNode n( JSON_NODE );
+    n.set_name( "status" );
+    n.push_back( JSONNode( "name", "ATSymbolStatus" ) );
+    n.push_back( JSONNode( "enum", status ) );
+    n.push_back( JSONNode( "type", strStatusType ) );
+    return n;
 }
 
 
