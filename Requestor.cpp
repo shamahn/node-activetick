@@ -196,6 +196,12 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
 
     n.push_back( resp );
     m_pInboundMsgs->push( n );
+
+    if( pResponse->nextOffset != 0xffffffffffffffffULL &&
+        pResponse->nextOffset != 0xfffffffffffffff0ULL &&
+        pResponse->nextOffset != 0 )
+        SendATTickHistoryDbRequest( pResponse->symbol, true, true, 10, pResponse->nextOffset, pResponse->offsetDatabaseDate, DEFAULT_REQUEST_TIMEOUT);
+
 }
 
 JSONNode Requestor::jsonifyAtTickHistory( LPATTICKHISTORY_RESPONSE pResponse ) {
