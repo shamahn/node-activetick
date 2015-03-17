@@ -61,6 +61,7 @@ private:
                         uint32_t symbolsCount);
 
     JSONNode jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse );
+    JSONNode jsonifyAtTickHistory( LPATTICKHISTORY_RESPONSE pResponse );
 
 private:
     static Jsonifier m_jsonifier;

@@ -1,6 +1,4 @@
-#ifndef atjsonparser_h__INCLUDED
-#define atjsonparser_h__INCLUDED
-
+#pragma once
 #include <string>
 #include <cstring>
 #include <node.h>
@@ -21,5 +19,3 @@ private:
     bool filterAsInteger( const std::string& node_name );
     bool filterAsBoolean( const std::string& node_name );
 };
-
-#endif

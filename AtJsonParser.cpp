@@ -14,7 +14,11 @@ Handle<Object> AtJsonParser::parse( const JSONNode &n ) {
     while ( i != n.end() ) {
         std::string node_name = i->name();
         if ( node_name == "serverTime" ||
-             node_name == "atLoginResponse"
+             node_name == "response" ||
+             node_name == "data" ||
+             node_name == "atBarHistory" ||
+             node_name == "atSymbol" ||
+             node_name == "records"
               ) {
             retData->Set( String::NewSymbol( node_name.c_str() ), parse( *i ) );
         }
