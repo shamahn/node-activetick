@@ -603,4 +603,8 @@ JSONNode Requestor::jsonifyAtQuoteStream( LPATQUOTESTREAM_RESPONSE pResponse,
 }
 
 /*virtual*/ void Requestor::OnATRequestTimeout( uint64_t origRequest ) {
+    JSONNode n( JSON_NODE );
+    n.push_back( JSONNode( "messageId", "atRequestTimeout" ) );
+    n.push_back( JSONNode( "origRequest", origRequest ) );
+    m_pInboundMsgs->push( n );
 }
