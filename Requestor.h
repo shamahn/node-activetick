@@ -65,6 +65,9 @@ private:
     JSONNode jsonifyAtSymbolStatus( ATSymbolStatus status );
     JSONNode jsonifyAtMarketMoversDb( LPATMARKET_MOVERSDB_RESPONSE pResponse );
     JSONNode jsonifyAtQuoteDb( LPATQUOTEDB_RESPONSE pResponse, uint32_t responseCount );
+    JSONNode jsonifyStreamResponseType( ATStreamResponseType responseType );
+    JSONNode jsonifyAtQuoteStream( LPATQUOTESTREAM_RESPONSE pResponse,
+                                   ATStreamResponseType responseType );
 
 private:
     static Jsonifier m_jsonifier;

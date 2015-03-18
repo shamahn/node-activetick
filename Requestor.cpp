@@ -405,7 +405,6 @@ JSONNode Requestor::jsonifyAtMarketMoversDb( LPATMARKET_MOVERSDB_RESPONSE pRespo
     n.push_back( data );
 
     m_pInboundMsgs->push( n );
-    
 }
 
 JSONNode Requestor::jsonifyAtQuoteDb( LPATQUOTEDB_RESPONSE pResponse,
@@ -533,6 +532,30 @@ JSONNode Requestor::jsonifyAtQuoteDb( LPATQUOTEDB_RESPONSE pResponse,
                                 uint64_t origRequest,
                                 ATStreamResponseType responseType,
                                 LPATMARKET_MOVERS_STREAM_RESPONSE pResponse ) {
+    JSONNode n( JSON_NODE );
+    n.push_back( JSONNode( "messageId", "atMarketMoversStream" ) );
+    n.push_back( JSONNode( "origRequest", origRequest ) );
+    n.push_back( jsonifyStreamResponseType( responseType ) );
+
+    m_pInboundMsgs->push( n );
+}
+
+JSONNode Requestor::jsonifyStreamResponseType( ATStreamResponseType responseType ) {
+
+    string strResponseType;
+    switch(responseType)
+    {
+    case StreamResponseSuccess: strResponseType = "StreamResponseSuccess"; break;
+    case StreamResponseInvalidRequest: strResponseType = "StreamResponseInvalidRequest"; break;
+    case StreamResponseDenied: strResponseType = "StreamResponseDenied"; break;
+    default: break;
+    }
+    JSONNode resp( JSON_NODE );
+    resp.set_name( "response" );
+    resp.push_back( JSONNode( "name", "ATStreamResponseType" ) );
+    resp.push_back( JSONNode( "enum", responseType ) );
+    resp.push_back( JSONNode( "type", strResponseType ) );
+    return resp;
 }
 
 /*virtual*/ void Requestor::OnATQuoteStreamResponse(
@@ -540,6 +563,43 @@ JSONNode Requestor::jsonifyAtQuoteDb( LPATQUOTEDB_RESPONSE pResponse,
                                     ATStreamResponseType responseType,
                                     LPATQUOTESTREAM_RESPONSE pResponse,
                                     uint32_t responseCount ) {
+    JSONNode n( JSON_NODE );
+    n.push_back( JSONNode( "messageId", "atQuoteStream" ) );
+    n.push_back( JSONNode( "origRequest", origRequest ) );
+    n.push_back( jsonifyStreamResponseType( responseType ) );
+
+    JSONNode data( JSON_NODE );
+    data.set_name( "data" );
+    data.push_back( jsonifyAtQuoteStream( pResponse, responseType ) );
+    n.push_back( data );
+
+    m_pInboundMsgs->push( n );
+}
+
+JSONNode Requestor::jsonifyAtQuoteStream( LPATQUOTESTREAM_RESPONSE pResponse,
+                                          ATStreamResponseType responseType ) {
+    JSONNode n( JSON_NODE );
+    n.set_name( "atQuoteStream" );
+
+    if( responseType == StreamResponseSuccess ) {
+        ATQuoteStreamResponseParser parser( pResponse );
+        parser.MoveToBeginning();
+
+        if(parser.MoveToFirstDataItem() == true) {
+            JSONNode items( JSON_ARRAY );
+            items.set_name( "dataItems" );
+            while( true ) {
+                JSONNode item( JSON_NODE );
+                item.push_back( m_jsonifier.jsonifyAtSymbol( parser.GetSymbol() ) );
+                item.push_back( jsonifyAtSymbolStatus( parser.GetSymbolStatus() ) );
+                items.push_back( item );
+                if(parser.MoveToNextDataItem() == false)
+                    break;
+            }
+            n.push_back( items );
+        }
+    }
+    return n;
 }
 
 /*virtual*/ void Requestor::OnATRequestTimeout( uint64_t origRequest ) {
