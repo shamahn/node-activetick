@@ -32,7 +32,7 @@ Requestor::~Requestor(void)
                                     ATBarHistoryResponseType responseType,
                                     LPATBARHISTORY_RESPONSE pResponse) {
     JSONNode n( JSON_NODE );
-    n.push_back( JSONNode( "messageId", "atBarHistory" ) );
+    n.push_back( JSONNode( "messageId", "atBarHistoryDb" ) );
     n.push_back( JSONNode( "origRequest", origRequest ) );
 
     string strResponseType;
@@ -69,15 +69,15 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
     n.push_back( m_jsonifier.jsonifyAtSymbol( parser.GetSymbol() ) );
     n.push_back( JSONNode( "recordsCount", parser.GetRecordCount() ) );
 
-    if(parser.MoveToFirstRecord())
-    {
+    if( parser.MoveToFirstRecord() ) {
         JSONNode c( JSON_ARRAY );
         c.set_name( "records");
-        while(true)
-        {
+        while( true ) {
+            JSONNode bar( JSON_NODE );
+
             ATTIME recordDateTime = parser.GetDateTime();
 
-            c.push_back( m_jsonifier.jsonifyAtTime( "barTime",
+            bar.push_back( m_jsonifier.jsonifyAtTime( "barTime",
                                                     &recordDateTime ) );
             
             JSONNode open( JSON_NODE );
@@ -85,29 +85,30 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
             open.push_back( JSONNode( "precision",
                                       parser.GetOpen().precision ) );
             open.push_back( JSONNode( "price", parser.GetOpen().price ) );
-            c.push_back( open );
+            bar.push_back( open );
 
             JSONNode high( JSON_NODE );
             high.set_name( "high" );
             high.push_back( JSONNode( "precision",
                                       parser.GetHigh().precision ) );
             high.push_back( JSONNode( "price", parser.GetHigh().price ) );
-            c.push_back( high );
+            bar.push_back( high );
 
             JSONNode low( JSON_NODE );
             low.set_name( "low" );
             low.push_back( JSONNode( "precision", parser.GetLow().precision ) );
             low.push_back( JSONNode( "price", parser.GetLow().price ) );
-            c.push_back( low );
+            bar.push_back( low );
 
             JSONNode close( JSON_NODE );
             close.set_name( "close" );
             close.push_back( JSONNode( "precision",
                                        parser.GetClose().precision ) );
             close.push_back( JSONNode( "price", parser.GetClose().price ) );
-            c.push_back( close );
+            bar.push_back( close );
 
-            c.push_back( JSONNode( "volume", parser.GetVolume() ) );
+            bar.push_back( JSONNode( "volume", parser.GetVolume() ) );
+            c.push_back( bar );
 
             if(parser.MoveToNextRecord() == false)
                 break;
@@ -170,7 +171,7 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
                                     ATTickHistoryResponseType responseType,
                                     LPATTICKHISTORY_RESPONSE pResponse ) {
     JSONNode n( JSON_NODE );
-    n.push_back( JSONNode( "messageId", "atTickHistory" ) );
+    n.push_back( JSONNode( "messageId", "atTickHistoryDb" ) );
     n.push_back( JSONNode( "origRequest", origRequest ) );
 
     string strResponseType;
@@ -200,7 +201,10 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
     if( pResponse->nextOffset != 0xffffffffffffffffULL &&
         pResponse->nextOffset != 0xfffffffffffffff0ULL &&
         pResponse->nextOffset != 0 )
-        SendATTickHistoryDbRequest( pResponse->symbol, true, true, 10, pResponse->nextOffset, pResponse->offsetDatabaseDate, DEFAULT_REQUEST_TIMEOUT);
+        SendATTickHistoryDbRequest( pResponse->symbol, true, true, 10,
+                                    pResponse->nextOffset,
+                                    pResponse->offsetDatabaseDate,
+                                    DEFAULT_REQUEST_TIMEOUT);
 
 }
 
@@ -220,9 +224,11 @@ JSONNode Requestor::jsonifyAtTickHistory( LPATTICKHISTORY_RESPONSE pResponse ) {
     if( parser.MoveToFirstRecord() ) {
         JSONNode c( JSON_ARRAY );
         c.set_name( "records" );
-        while(true) {
+        while( true ) {
+            JSONNode tick( JSON_NODE );
+
             ATTIME recordDateTime = parser.GetRecordDateTime();
-            c.push_back( m_jsonifier.jsonifyAtTime( "tickTime",
+            tick.push_back( m_jsonifier.jsonifyAtTime( "tickTime",
                                                     &recordDateTime ) );
             switch( parser.GetRecordType() )
             {
@@ -234,10 +240,10 @@ JSONNode Requestor::jsonifyAtTickHistory( LPATTICKHISTORY_RESPONSE pResponse ) {
                                     parser.GetTradeLastPrice().precision ) );
                 last.push_back( JSONNode( "price",
                                     parser.GetTradeLastPrice().price ) );
-                c.push_back( last );
-                c.push_back( JSONNode( "tradeLastSize", parser.GetTradeLastSize() ) );
-                c.push_back( JSONNode( "tradeLastExchange", parser.GetTradeLastExchange() ) );
-                c.push_back( JSONNode( "tradeCondition", parser.GetTradeCondition(0) ) );
+                tick.push_back( last );
+                tick.push_back( JSONNode( "tradeLastSize", parser.GetTradeLastSize() ) );
+                tick.push_back( JSONNode( "tradeLastExchange", parser.GetTradeLastExchange() ) );
+                tick.push_back( JSONNode( "tradeCondition", parser.GetTradeCondition(0) ) );
                 }
                 break;
             case TickHistoryRecordQuote:
@@ -248,24 +254,25 @@ JSONNode Requestor::jsonifyAtTickHistory( LPATTICKHISTORY_RESPONSE pResponse ) {
                                    parser.GetQuoteBidPrice().precision ) );
                 bid.push_back( JSONNode( "price",
                                    parser.GetQuoteBidPrice().price ) );
-                c.push_back( bid );
+                tick.push_back( bid );
                 JSONNode ask( JSON_NODE );
                 ask.set_name( "quoteAskPrice" );
                 ask.push_back( JSONNode( "precision",
                                    parser.GetQuoteAskPrice().precision ) );
                 ask.push_back( JSONNode( "price",
                                    parser.GetQuoteAskPrice().price ) );
-                c.push_back( ask );
-                c.push_back( JSONNode( "quoteBidSize", parser.GetQuoteBidSize() ) );
-                c.push_back( JSONNode( "quoteAskSize", parser.GetQuoteAskSize() ) );
-                c.push_back( JSONNode( "quoteBidExchange", parser.GetQuoteBidExchange() ) );
-                c.push_back( JSONNode( "quoteAskExchange", parser.GetQuoteAskExchange() ) );
-                c.push_back( JSONNode( "quoteCondition", parser.GetQuoteCondition() ) );
+                tick.push_back( ask );
+                tick.push_back( JSONNode( "quoteBidSize", parser.GetQuoteBidSize() ) );
+                tick.push_back( JSONNode( "quoteAskSize", parser.GetQuoteAskSize() ) );
+                tick.push_back( JSONNode( "quoteBidExchange", parser.GetQuoteBidExchange() ) );
+                tick.push_back( JSONNode( "quoteAskExchange", parser.GetQuoteAskExchange() ) );
+                tick.push_back( JSONNode( "quoteCondition", parser.GetQuoteCondition() ) );
                 }
                 break;
             default:
                 break;
             }
+            c.push_back( tick );
             if(parser.MoveToNextRecord() == false)
                 break;
             
@@ -298,6 +305,76 @@ JSONNode Requestor::jsonifyAtSymbolStatus( ATSymbolStatus status ) {
                                     uint64_t origRequest,
                                     ATMarketMoversDbResponseType responseType,
                                     LPATMARKET_MOVERSDB_RESPONSE pResponse ) {
+    JSONNode n( JSON_NODE );
+    n.push_back( JSONNode( "messageId", "atMarketMoversDb" ) );
+    n.push_back( JSONNode( "origRequest", origRequest ) );
+
+    string strResponseType;
+    switch(responseType)
+    {
+    case MarketMoversDbResponseSuccess: strResponseType = "MarketMoversDbResponseSuccess"; break;
+    case MarketMoversDbResponseInvalidRequest: strResponseType = "MarketMoversDbResponseInvalidRequest"; break;
+    case MarketMoversDbResponseDenied: strResponseType = "MarketMoversDbResponseDenied"; break;
+    default: break;
+    }
+
+    JSONNode resp( JSON_NODE );
+    resp.set_name( "response" );
+    resp.push_back( JSONNode( "name", "ATMarketMoversDbResponseType" ) );
+    resp.push_back( JSONNode( "enum", responseType ) );
+    resp.push_back( JSONNode( "type", strResponseType ) );
+
+    JSONNode data( JSON_NODE );
+    data.set_name( "data" );
+    data.push_back( jsonifyAtMarketMoversDb( pResponse ) );
+
+    resp.push_back( data );
+
+    n.push_back( resp );
+    m_pInboundMsgs->push( n );
+}
+
+JSONNode Requestor::jsonifyAtMarketMoversDb( LPATMARKET_MOVERSDB_RESPONSE pResponse ) {
+
+    ATMarketMoversDbResponseParser parser(pResponse);
+
+    JSONNode n( JSON_NODE );
+    n.set_name( "atMarketMoversDb" );
+
+    if( parser.MoveToFirstRecord() == true ) {
+        JSONNode c( JSON_ARRAY );
+        c.set_name( "records" );
+        while( true ) {
+            JSONNode rec( JSON_NODE );
+            rec.push_back( JSONNode( "recordSymbol", parser.GetRecordSymbol()->symbol ) );
+
+            if(parser.MoveToFirstItem() == true) {
+                JSONNode items( JSON_ARRAY );
+                items.set_name( "items" );
+                while( true ) {
+                    JSONNode item( JSON_NODE );
+                    item.push_back( JSONNode( "symbol", parser.GetItemSymbol()->symbol ) );
+
+                    JSONNode lastPrice( JSON_NODE );
+                    lastPrice.set_name( "itemLastPrice" );
+                    lastPrice.push_back( JSONNode( "precision", parser.GetItemSymbol()->symbol ) );
+                    lastPrice.push_back( JSONNode( "price", parser.GetItemLastPrice().price ) );
+                    item.push_back( lastPrice );
+
+                    item.push_back( JSONNode( "itemVolume", parser.GetItemVolume() ) );
+                    items.push_back( item );
+                    if(parser.MoveToNextItem() == false)
+                        break;
+                }
+                rec.push_back( items );
+
+                c.push_back( rec );
+                if(parser.MoveToNextRecord() == false)
+                    break;
+            }
+        }
+    }
+    return n;
 }
 
 /*virtual*/ void Requestor::OnATQuoteDbResponse(

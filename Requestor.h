@@ -63,6 +63,7 @@ private:
     JSONNode jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse );
     JSONNode jsonifyAtTickHistory( LPATTICKHISTORY_RESPONSE pResponse );
     JSONNode jsonifyAtSymbolStatus( ATSymbolStatus status );
+    JSONNode jsonifyAtMarketMoversDb( LPATMARKET_MOVERSDB_RESPONSE pResponse );
 
 private:
     static Jsonifier m_jsonifier;
