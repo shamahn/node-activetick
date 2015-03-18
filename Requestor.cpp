@@ -50,14 +50,13 @@ Requestor::~Requestor(void)
     resp.push_back( JSONNode( "name", "ATBarHistoryResponseType" ) );
     resp.push_back( JSONNode( "enum", responseType ) );
     resp.push_back( JSONNode( "type", strResponseType ) );
+    n.push_back( resp );
 
     JSONNode data( JSON_NODE );
     data.set_name( "data" );
     data.push_back( jsonifyAtBarHistory( pResponse ) );
+    n.push_back( data );
 
-    resp.push_back( data );
-
-    n.push_back( resp );
     m_pInboundMsgs->push( n );
 }
 
@@ -188,14 +187,13 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
     resp.push_back( JSONNode( "name", "ATTickHistoryResponseType" ) );
     resp.push_back( JSONNode( "enum", responseType ) );
     resp.push_back( JSONNode( "type", strResponseType ) );
+    n.push_back( resp );
 
     JSONNode data( JSON_NODE );
     data.set_name( "data" );
     data.push_back( jsonifyAtTickHistory( pResponse ) );
+    n.push_back( data );
 
-    resp.push_back( data );
-
-    n.push_back( resp );
     m_pInboundMsgs->push( n );
 
     if( pResponse->nextOffset != 0xffffffffffffffffULL &&
@@ -323,14 +321,13 @@ JSONNode Requestor::jsonifyAtSymbolStatus( ATSymbolStatus status ) {
     resp.push_back( JSONNode( "name", "ATMarketMoversDbResponseType" ) );
     resp.push_back( JSONNode( "enum", responseType ) );
     resp.push_back( JSONNode( "type", strResponseType ) );
+    n.push_back( resp );
 
     JSONNode data( JSON_NODE );
     data.set_name( "data" );
     data.push_back( jsonifyAtMarketMoversDb( pResponse ) );
+    n.push_back( data );
 
-    resp.push_back( data );
-
-    n.push_back( resp );
     m_pInboundMsgs->push( n );
 }
 
@@ -382,7 +379,155 @@ JSONNode Requestor::jsonifyAtMarketMoversDb( LPATMARKET_MOVERSDB_RESPONSE pRespo
                                     ATQuoteDbResponseType responseType,
                                     LPATQUOTEDB_RESPONSE pResponse,
                                     uint32_t responseCount ) {
+    JSONNode n( JSON_NODE );
+    n.push_back( JSONNode( "messageId", "atQuoteDb" ) );
+    n.push_back( JSONNode( "origRequest", origRequest ) );
+
+    string strResponseType;
+    switch(responseType)
+    {
+    case QuoteDbResponseSuccess: strResponseType = "QuoteDbResponseSuccess"; break;
+    case QuoteDbResponseInvalidRequest: strResponseType = "QuoteDbResponseInvalidRequest"; break;
+    case QuoteDbResponseDenied: strResponseType = "QuoteDbResponseDenied"; break;
+    default: break;
+    }
+
+    JSONNode resp( JSON_NODE );
+    resp.set_name( "response" );
+    resp.push_back( JSONNode( "name", "ATQuoteDbResponseType" ) );
+    resp.push_back( JSONNode( "enum", responseType ) );
+    resp.push_back( JSONNode( "type", strResponseType ) );
+    n.push_back( resp );
+
+    JSONNode data( JSON_NODE );
+    data.set_name( "data" );
+    data.push_back( jsonifyAtQuoteDb( pResponse, responseCount ) );
+    n.push_back( data );
+
+    m_pInboundMsgs->push( n );
+    
 }
+
+JSONNode Requestor::jsonifyAtQuoteDb( LPATQUOTEDB_RESPONSE pResponse,
+                                      uint32_t responseCount ) {
+    ATQuoteDbResponseParser parser( pResponse, responseCount );
+    JSONNode n( JSON_NODE );
+    n.set_name( "atQuoteDb" );
+
+    if( parser.MoveToFirstResponse() == true ) {
+        JSONNode recs( JSON_ARRAY );
+        recs.set_name( "records" );
+
+        while( true ) {
+            JSONNode rec( JSON_NODE );
+
+            rec.push_back( jsonifyAtSymbolStatus( parser.GetSymbolStatus() ) );
+            JSONNode items( JSON_ARRAY );
+            items.set_name( "dataItems" );
+
+            if(parser.GetSymbolStatus() == SymbolStatusSuccess && parser.MoveToFirstDataItem() == true) {
+                while(true) {
+                    JSONNode item( JSON_NODE );
+
+                    char data[512] = {0};
+                    ATDataType dataType = parser.GetDataItemDataType();
+                    JSONNode dType( JSON_NODE );
+                    dType.set_name( "dataType" );
+                    dType.push_back( JSONNode( "enum", dataType ) );
+
+                    switch( dataType )
+                    {
+                    case DataByte:
+                        {
+                        dType.push_back( JSONNode( "type", "byte" ) );
+                        item.push_back( JSONNode( "data", *(char*)parser.GetDataItemData() ) );
+                        }
+                        break;
+                    case DataByteArray:
+                        {
+                        dType.push_back( JSONNode( "type", "byteArray" ) );
+                        item.push_back( JSONNode( "data", data ) );
+                        }
+                        break;
+                    case DataUInteger32:
+                        {
+                        dType.push_back( JSONNode( "type", "uint32" ) );
+                        item.push_back( JSONNode( "data", *(uint32_t*)parser.GetDataItemData() ) );
+                        }
+                        break;
+                    case DataUInteger64:
+                        {
+                        dType.push_back( JSONNode( "type", "uint64" ) );
+                        item.push_back( JSONNode( "data", *(uint64_t*)parser.GetDataItemData() ) );
+                        }
+                        break;
+                    case DataInteger32:
+                        {
+                        dType.push_back( JSONNode( "type", "int32" ) );
+                        item.push_back( JSONNode( "data", *(int32_t*)parser.GetDataItemData() ) );
+                        }
+                        break;
+                    case DataInteger64:
+                        {
+                        dType.push_back( JSONNode( "type", "int64" ) );
+                        item.push_back( JSONNode( "data", *(int64_t*)parser.GetDataItemData() ) );
+                        }
+                        break;
+                    case DataPrice:
+                        {
+                        dType.push_back( JSONNode( "type", "price" ) );
+                        ATPRICE price = *(LPATPRICE)parser.GetDataItemData();
+                        JSONNode dat( JSON_NODE );
+                        dat.set_name( "data" );
+                        dat.push_back( JSONNode( "precision", price.precision ) );
+                        dat.push_back( JSONNode( "price", price.price ) );
+                        item.push_back( dat );
+                        }
+                        break;
+                    case DataString:
+                        {
+                        dType.push_back( JSONNode( "type", "string" ) );
+                        char* pString = (char*)parser.GetDataItemData();
+                        strncpy(data, pString, sizeof(data) - 1);
+                        item.push_back( JSONNode( "data", data ) );
+                        }
+                        break;
+                    case DataUnicodeString:
+                        {
+                        dType.push_back( JSONNode( "type", "unicodeString" ) );
+                        wchar16_t* pString = (wchar16_t*)parser.GetDataItemData();
+                        std::string s = Helper::ConvertString(pString, Helper::StringLength(pString));
+                        strncpy(data, s.c_str(), sizeof(data));
+                        item.push_back( JSONNode( "data", data ) );
+                        }
+                        break;
+                    case DataDateTime:
+                        {
+                        dType.push_back( JSONNode( "type", "dateTime" ) );
+                        LPATTIME pst = (LPATTIME)parser.GetDataItemData();
+                        item.push_back( m_jsonifier.jsonifyAtTime( "data", pst ) );
+                        }
+                        break;
+                    default: break;
+                    }
+                    item.push_back( JSONNode( "dataItemQuoteFieldType", parser.GetDataItemQuoteFieldType() ) );
+                    item.push_back( JSONNode( "dataItemFieldStatus", parser.GetDataItemFieldStatus() ) );
+                    item.push_back( dType );
+                    items.push_back( item );
+                    if(parser.MoveToNextDataItem() == false)
+                        break;
+                }
+            }
+            rec.push_back( items );
+            recs.push_back( rec );
+            if(parser.MoveToNextResponse() == false)
+                break;
+        }
+        n.push_back( recs );
+    }
+    return n;
+}
+
 
 /*virtual*/ void Requestor::OnATMarketMoversStreamResponse(
                                 uint64_t origRequest,
