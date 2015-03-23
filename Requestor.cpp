@@ -66,7 +66,7 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
     JSONNode n( JSON_NODE );
     n.set_name( "atBarHistory" );
     n.push_back( m_jsonifier.jsonifyAtSymbol( parser.GetSymbol() ) );
-    n.push_back( JSONNode( "recordsCount", parser.GetRecordCount() ) );
+    n.push_back( JSONNode( "count", parser.GetRecordCount() ) );
 
     if( parser.MoveToFirstRecord() ) {
         JSONNode c( JSON_ARRAY );
@@ -76,7 +76,7 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
 
             ATTIME recordDateTime = parser.GetDateTime();
 
-            bar.push_back( m_jsonifier.jsonifyAtTime( "barTime",
+            bar.push_back( m_jsonifier.jsonifyAtTime( "time",
                                                     &recordDateTime ) );
             
             JSONNode open( JSON_NODE );
@@ -153,7 +153,7 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
     list.set_name( "data" );
     for(uint32_t i = 0; i < symbolsCount; ++i) {
         JSONNode symbol( JSON_NODE );
-        symbol.push_back( JSONNode( "symbol", Helper::ConvertString(
+        symbol.push_back( JSONNode( "symbolStr", Helper::ConvertString(
                 pSymbols[i].symbol, _countof(pSymbols[i].symbol)).c_str() ) );
         symbol.push_back( JSONNode( "symbolType", pSymbols[i].symbolType ) );
         symbol.push_back( JSONNode( "exchangeType", pSymbols[i].exchangeType ));
@@ -213,7 +213,7 @@ JSONNode Requestor::jsonifyAtTickHistory( LPATTICKHISTORY_RESPONSE pResponse ) {
     n.set_name( "atTickHistory" );
     n.push_back( m_jsonifier.jsonifyAtSymbol( parser.GetSymbol() ) );
     n.push_back( jsonifyAtSymbolStatus( parser.GetSymbolStatus() ) );
-    n.push_back( JSONNode( "recordCount", parser.GetRecordCount() ) );
+    n.push_back( JSONNode( "count", parser.GetRecordCount() ) );
     n.push_back( JSONNode( "nextOffset", parser.GetNextOffset() ) );
     ATTIME offsetDatabaseDate = parser.GetOffsetDbDate();
     n.push_back( m_jsonifier.jsonifyAtTime( "offsetDatabaseDate",
@@ -226,7 +226,7 @@ JSONNode Requestor::jsonifyAtTickHistory( LPATTICKHISTORY_RESPONSE pResponse ) {
             JSONNode tick( JSON_NODE );
 
             ATTIME recordDateTime = parser.GetRecordDateTime();
-            tick.push_back( m_jsonifier.jsonifyAtTime( "tickTime",
+            tick.push_back( m_jsonifier.jsonifyAtTime( "time",
                                                     &recordDateTime ) );
             switch( parser.GetRecordType() )
             {
@@ -350,7 +350,7 @@ JSONNode Requestor::jsonifyAtMarketMoversDb( LPATMARKET_MOVERSDB_RESPONSE pRespo
                 items.set_name( "items" );
                 while( true ) {
                     JSONNode item( JSON_NODE );
-                    item.push_back( JSONNode( "symbol", parser.GetItemSymbol()->symbol ) );
+                    item.push_back( JSONNode( "itemSymbol", parser.GetItemSymbol()->symbol ) );
 
                     JSONNode lastPrice( JSON_NODE );
                     lastPrice.set_name( "itemLastPrice" );
@@ -430,88 +430,79 @@ JSONNode Requestor::jsonifyAtQuoteDb( LPATQUOTEDB_RESPONSE pResponse,
 
                     char data[512] = {0};
                     ATDataType dataType = parser.GetDataItemDataType();
-                    JSONNode dType( JSON_NODE );
-                    dType.set_name( "dataType" );
-                    dType.push_back( JSONNode( "enum", dataType ) );
+                    JSONNode dContent( JSON_NODE );
+                    dContent.set_name( "data" );
+                    dContent.push_back( JSONNode( "enum", dataType ) );
 
                     switch( dataType )
                     {
                     case DataByte:
                         {
-                        dType.push_back( JSONNode( "type", "byte" ) );
-                        item.push_back( JSONNode( "data", *(char*)parser.GetDataItemData() ) );
+                        dContent.push_back( JSONNode( "byte", *(char*)parser.GetDataItemData() ) );
                         }
                         break;
                     case DataByteArray:
                         {
-                        dType.push_back( JSONNode( "type", "byteArray" ) );
-                        item.push_back( JSONNode( "data", data ) );
+                        // TODO handle byteArray
+                        dContent.push_back( JSONNode( "byteArray", data ) );
                         }
                         break;
                     case DataUInteger32:
                         {
-                        dType.push_back( JSONNode( "type", "uint32" ) );
-                        item.push_back( JSONNode( "data", *(uint32_t*)parser.GetDataItemData() ) );
+                        dContent.push_back( JSONNode( "uint32", *(uint32_t*)parser.GetDataItemData() ) );
                         }
                         break;
                     case DataUInteger64:
                         {
-                        dType.push_back( JSONNode( "type", "uint64" ) );
-                        item.push_back( JSONNode( "data", *(uint64_t*)parser.GetDataItemData() ) );
+                        dContent.push_back( JSONNode( "uint64", *(uint64_t*)parser.GetDataItemData() ) );
                         }
                         break;
                     case DataInteger32:
                         {
-                        dType.push_back( JSONNode( "type", "int32" ) );
-                        item.push_back( JSONNode( "data", *(int32_t*)parser.GetDataItemData() ) );
+                        dContent.push_back( JSONNode( "int32", *(int32_t*)parser.GetDataItemData() ) );
                         }
                         break;
                     case DataInteger64:
                         {
-                        dType.push_back( JSONNode( "type", "int64" ) );
-                        item.push_back( JSONNode( "data", *(int64_t*)parser.GetDataItemData() ) );
+                        dContent.push_back( JSONNode( "int64", *(int64_t*)parser.GetDataItemData() ) );
                         }
                         break;
                     case DataPrice:
                         {
-                        dType.push_back( JSONNode( "type", "price" ) );
                         ATPRICE price = *(LPATPRICE)parser.GetDataItemData();
                         JSONNode dat( JSON_NODE );
-                        dat.set_name( "data" );
+                        dat.set_name( "priceData" );
                         dat.push_back( JSONNode( "precision", price.precision ) );
                         dat.push_back( JSONNode( "price", price.price ) );
-                        item.push_back( dat );
+                        dContent.push_back( dat );
                         }
                         break;
                     case DataString:
                         {
-                        dType.push_back( JSONNode( "type", "string" ) );
                         char* pString = (char*)parser.GetDataItemData();
                         strncpy(data, pString, sizeof(data) - 1);
-                        item.push_back( JSONNode( "data", data ) );
+                        dContent.push_back( JSONNode( "string", data ) );
                         }
                         break;
                     case DataUnicodeString:
                         {
-                        dType.push_back( JSONNode( "type", "unicodeString" ) );
                         wchar16_t* pString = (wchar16_t*)parser.GetDataItemData();
                         std::string s = Helper::ConvertString(pString, Helper::StringLength(pString));
                         strncpy(data, s.c_str(), sizeof(data));
-                        item.push_back( JSONNode( "data", data ) );
+                        dContent.push_back( JSONNode( "unicodeString", data ) );
                         }
                         break;
                     case DataDateTime:
                         {
-                        dType.push_back( JSONNode( "type", "dateTime" ) );
                         LPATTIME pst = (LPATTIME)parser.GetDataItemData();
-                        item.push_back( m_jsonifier.jsonifyAtTime( "data", pst ) );
+                        dContent.push_back( m_jsonifier.jsonifyAtTime( "dateTime", pst ) );
                         }
                         break;
                     default: break;
                     }
                     item.push_back( JSONNode( "dataItemQuoteFieldType", parser.GetDataItemQuoteFieldType() ) );
                     item.push_back( JSONNode( "dataItemFieldStatus", parser.GetDataItemFieldStatus() ) );
-                    item.push_back( dType );
+                    item.push_back( dContent );
                     items.push_back( item );
                     if(parser.MoveToNextDataItem() == false)
                         break;
