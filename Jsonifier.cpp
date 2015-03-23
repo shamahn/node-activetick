@@ -25,7 +25,7 @@ Jsonifier::~Jsonifier( void ) {
 /*static*/ JSONNode Jsonifier::jsonifyAtSymbol( LPATSYMBOL pSymbol ) {
     JSONNode s( JSON_NODE );
     s.set_name( "atSymbol" );
-    s.push_back( JSONNode( "symbol", pSymbol->symbol ) );
+    s.push_back( JSONNode( "symbolStr", pSymbol->symbol ) );
     s.push_back( JSONNode( "symbolType", pSymbol->symbolType ) );
     s.push_back( JSONNode( "exchangeType", pSymbol->exchangeType ) );
     s.push_back( JSONNode( "countryType", pSymbol->countryType ) );

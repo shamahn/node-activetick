@@ -115,7 +115,16 @@ bool AtJsonParser::filterAsInteger( const std::string& node_name ) {
          node_name == "int32" ||
          node_name == "int64" ||
          node_name == "dataItemQuoteFieldType" ||
-         node_name == "dataItemFieldStatus"
+         node_name == "dataItemFieldStatus" ||
+         node_name == "year" ||
+         node_name == "month" ||
+         node_name == "dayOfWeek" ||
+         node_name == "day" ||
+         node_name == "hour" ||
+         node_name == "minute" ||
+         node_name == "second" ||
+         node_name == "milliseconds"
+
        )
         return true;
     return false;
