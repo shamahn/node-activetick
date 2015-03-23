@@ -16,9 +16,10 @@ Handle<Object> AtJsonParser::parse( const JSONNode &n ) {
         if ( node_name == "serverTime" ||
              node_name == "response" ||
              node_name == "data" ||
+             node_name == "records" ||
              node_name == "atBarHistory" ||
              node_name == "atSymbol" ||
-             node_name == "records"
+             node_name == "atLoginResponse" ||
               ) {
             retData->Set( String::NewSymbol( node_name.c_str() ), parse( *i ) );
         }
@@ -56,7 +57,10 @@ bool AtJsonParser::filterAsNumber( const std::string& node_name ) {
 
 bool AtJsonParser::filterAsInteger( const std::string& node_name ) {
     if ( node_name == "hSession" ||
-         node_name == "statusType" )
+         node_name == "hOrigRequest" ||
+         node_name == "statusType" ||
+         node_name == "loginResponse" || 
+         node_name == "hRequest" )
         return true;
     return false;
 }
