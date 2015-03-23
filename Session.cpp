@@ -116,6 +116,8 @@ bool APISession::Destroy()
     JSONNode n( JSON_NODE );
     n.set_name( "atLoginResponse" );
     n.push_back( JSONNode( "loginResponse", pResponse->loginResponse ) );
+
+    // TODO make sure permissions is parsed by AtJsonParser
     n.push_back( JSONNode( "permissions", pResponse->permissions ) );
     n.push_back( m_jsonifier.jsonifyAtTime( 
                     "serverTime", &pResponse->serverTime ) );
