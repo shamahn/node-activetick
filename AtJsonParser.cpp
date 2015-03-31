@@ -17,28 +17,36 @@ Handle<Object> AtJsonParser::parse( const JSONNode &n ) {
              node_name == "response" ||
              node_name == "data" ||
              node_name == "records" ||
-             node_name == "atBarHistory" ||
-             node_name == "atSymbol" ||
-             node_name == "atLoginResponse" ||
+             node_name == "ATBarHistory" ||
+             node_name == "ATSymbol" ||
+             node_name == "ATLoginResponse" ||
              node_name == "time" ||
              node_name == "open" ||
              node_name == "high" ||
              node_name == "low" ||
              node_name == "close" ||
-             node_name == "atTickHistory" ||
+             node_name == "ATTickHistory" ||
              node_name == "offsetDatabaseDate" ||
              node_name == "tradeLastPrice" ||
              node_name == "quoteBidPrice" ||
              node_name == "quoteAskPrice" ||
-             node_name == "atMarketMoversDb" ||
+             node_name == "ATMarketMoversDb" ||
              node_name == "recordSymbol" ||
              node_name == "itemSymbol" ||
              node_name == "itemLastPrice" ||
-             node_name == "atQuoteDb" ||
+             node_name == "ATQuoteDb" ||
              node_name == "dataItems" ||
              node_name == "priceData" ||
              node_name == "dateTime" ||
-             node_name == "atQuoteStream"
+             node_name == "ATQuoteStream" ||
+             node_name == "lastPrice" ||
+             node_name == "bidPrice" ||
+             node_name == "askPrice" ||
+             node_name == "lastUpdateTime" ||
+             node_name == "marketMovers" ||
+             node_name == "closePrice" ||
+             node_name == "lastDateTime"
+             
               ) {
             retData->Set( String::NewSymbol( node_name.c_str() ), parse( *i ) );
         }
@@ -75,7 +83,9 @@ bool AtJsonParser::filterAsString( const std::string& node_name ) {
          node_name == "quoteAskExchange" ||
          node_name == "byte" ||
          node_name == "string" ||
-         node_name == "unicodeString"
+         node_name == "unicodeString" ||
+         node_name == "bidExchange" ||
+         node_name == "askExchange"
        )
         return true;
     return false;
@@ -123,8 +133,12 @@ bool AtJsonParser::filterAsInteger( const std::string& node_name ) {
          node_name == "hour" ||
          node_name == "minute" ||
          node_name == "second" ||
-         node_name == "milliseconds"
-
+         node_name == "milliseconds" ||
+         node_name == "lastSize" ||
+         node_name == "condition" ||
+         node_name == "bidSize" ||
+         node_name == "askSize" ||
+         node_name == "status"
        )
         return true;
     return false;

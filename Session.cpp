@@ -78,7 +78,7 @@ bool APISession::Destroy()
             Helper::StringLength(APISession::s_pInstance->m_userid)).c_str(), rc);
     }
     JSONNode n( JSON_NODE );
-    n.push_back( JSONNode( "messageId", "sessionStatus" ) );
+    n.push_back( JSONNode( "messageId", "ATSessionStatus" ) );
     n.push_back( JSONNode( "hSession" , hSession ) );
     n.push_back( JSONNode( "statusType", statusType ) );
     s_pInboundMsgs->push( n );
@@ -88,7 +88,7 @@ bool APISession::Destroy()
                         uint64_t hSession, uint64_t hRequest,
                         LPATLOGIN_RESPONSE pResponse ) {
     JSONNode n( JSON_NODE );
-    n.push_back( JSONNode( "messageId", "loginResponse" ) );
+    n.push_back( JSONNode( "messageId", "ATLoginResponse" ) );
     n.push_back( JSONNode( "hSession", hSession ) );
     n.push_back( JSONNode( "hRequest", hRequest ) );
     n.push_back( jsonifyAtloginResponse( pResponse ) );
@@ -98,7 +98,7 @@ bool APISession::Destroy()
 /*static*/ void APISession::ATServerTimeUpdateCallback(LPATTIME pServerTime)
 {
     JSONNode n( JSON_NODE );
-    n.push_back( JSONNode( "messageId", "serverTimeUpdate" ) );
+    n.push_back( JSONNode( "messageId", "ATServerTimeUpdate" ) );
     n.push_back( m_jsonifier.jsonifyAtTime( "serverTime", pServerTime ) );
     s_pInboundMsgs->push( n );
 }    
@@ -106,7 +106,7 @@ bool APISession::Destroy()
 /*static*/ void APISession::ATRequestTimeoutCallback(uint64_t hOrigRequest)
 {
     JSONNode n( JSON_NODE );
-    n.push_back( JSONNode( "messageId", "requestTimeout" ) );
+    n.push_back( JSONNode( "messageId", "ATRequestTimeout" ) );
     n.push_back( JSONNode( "hOrigRequest", hOrigRequest ) );
     s_pInboundMsgs->push( n );
 }
@@ -114,7 +114,7 @@ bool APISession::Destroy()
 /*static*/ JSONNode APISession::jsonifyAtloginResponse(
                             LPATLOGIN_RESPONSE pResponse ) {
     JSONNode n( JSON_NODE );
-    n.set_name( "atLoginResponse" );
+    n.set_name( "ATLoginResponse" );
     n.push_back( JSONNode( "loginResponse", pResponse->loginResponse ) );
 
     // TODO make sure permissions is parsed by AtJsonParser

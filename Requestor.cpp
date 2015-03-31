@@ -21,6 +21,7 @@ Requestor::Requestor( const APISession& session,
                       std::queue< JSONNode > *pInboundMsgs)
 : ActiveTickServerRequestor(session.GetSessionHandle())
 {
+    m_pInboundMsgs = pInboundMsgs;
 }
 
 Requestor::~Requestor(void)
@@ -32,7 +33,7 @@ Requestor::~Requestor(void)
                                     ATBarHistoryResponseType responseType,
                                     LPATBARHISTORY_RESPONSE pResponse) {
     JSONNode n( JSON_NODE );
-    n.push_back( JSONNode( "messageId", "atBarHistoryDb" ) );
+    n.push_back( JSONNode( "messageId", "ATBarHistoryDb" ) );
     n.push_back( JSONNode( "origRequest", origRequest ) );
 
     string strResponseType;
@@ -64,7 +65,7 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
     ATBarHistoryDbResponseParser parser(pResponse);
 
     JSONNode n( JSON_NODE );
-    n.set_name( "atBarHistory" );
+    n.set_name( "ATBarHistory" );
     n.push_back( m_jsonifier.jsonifyAtSymbol( parser.GetSymbol() ) );
     n.push_back( JSONNode( "count", parser.GetRecordCount() ) );
 
@@ -123,7 +124,7 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
                                     LPATSECTORLIST_RECORD pRecords,
                                     uint32_t recordsCount ) {
     JSONNode n( JSON_NODE );
-    n.push_back( JSONNode( "messageId", "atSectorList" ) );
+    n.push_back( JSONNode( "messageId", "ATSectorList" ) );
     n.push_back( JSONNode( "origRequest", origRequest ) );
     n.push_back( JSONNode( "count", recordsCount ) );
 
@@ -145,7 +146,7 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
                                     LPATSYMBOL pSymbols,
                                     uint32_t symbolsCount ) {
     JSONNode n( JSON_NODE );
-    n.push_back( JSONNode( "messageId", "atConstituentList" ) );
+    n.push_back( JSONNode( "messageId", "ATConstituentList" ) );
     n.push_back( JSONNode( "origRequest", origRequest ) );
     n.push_back( JSONNode( "count", symbolsCount ) );
     
@@ -170,7 +171,7 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
                                     ATTickHistoryResponseType responseType,
                                     LPATTICKHISTORY_RESPONSE pResponse ) {
     JSONNode n( JSON_NODE );
-    n.push_back( JSONNode( "messageId", "atTickHistoryDb" ) );
+    n.push_back( JSONNode( "messageId", "ATTickHistoryDb" ) );
     n.push_back( JSONNode( "origRequest", origRequest ) );
 
     string strResponseType;
@@ -210,7 +211,7 @@ JSONNode Requestor::jsonifyAtTickHistory( LPATTICKHISTORY_RESPONSE pResponse ) {
     ATTickHistoryDBResponseParser parser(pResponse);
 
     JSONNode n( JSON_NODE );
-    n.set_name( "atTickHistory" );
+    n.set_name( "ATTickHistory" );
     n.push_back( m_jsonifier.jsonifyAtSymbol( parser.GetSymbol() ) );
     n.push_back( jsonifyAtSymbolStatus( parser.GetSymbolStatus() ) );
     n.push_back( JSONNode( "count", parser.GetRecordCount() ) );
@@ -304,7 +305,7 @@ JSONNode Requestor::jsonifyAtSymbolStatus( ATSymbolStatus status ) {
                                     ATMarketMoversDbResponseType responseType,
                                     LPATMARKET_MOVERSDB_RESPONSE pResponse ) {
     JSONNode n( JSON_NODE );
-    n.push_back( JSONNode( "messageId", "atMarketMoversDb" ) );
+    n.push_back( JSONNode( "messageId", "ATMarketMoversDb" ) );
     n.push_back( JSONNode( "origRequest", origRequest ) );
 
     string strResponseType;
@@ -336,7 +337,7 @@ JSONNode Requestor::jsonifyAtMarketMoversDb( LPATMARKET_MOVERSDB_RESPONSE pRespo
     ATMarketMoversDbResponseParser parser(pResponse);
 
     JSONNode n( JSON_NODE );
-    n.set_name( "atMarketMoversDb" );
+    n.set_name( "ATMarketMoversDb" );
 
     if( parser.MoveToFirstRecord() == true ) {
         JSONNode c( JSON_ARRAY );
@@ -380,7 +381,7 @@ JSONNode Requestor::jsonifyAtMarketMoversDb( LPATMARKET_MOVERSDB_RESPONSE pRespo
                                     LPATQUOTEDB_RESPONSE pResponse,
                                     uint32_t responseCount ) {
     JSONNode n( JSON_NODE );
-    n.push_back( JSONNode( "messageId", "atQuoteDb" ) );
+    n.push_back( JSONNode( "messageId", "ATQuoteDb" ) );
     n.push_back( JSONNode( "origRequest", origRequest ) );
 
     string strResponseType;
@@ -411,7 +412,7 @@ JSONNode Requestor::jsonifyAtQuoteDb( LPATQUOTEDB_RESPONSE pResponse,
                                       uint32_t responseCount ) {
     ATQuoteDbResponseParser parser( pResponse, responseCount );
     JSONNode n( JSON_NODE );
-    n.set_name( "atQuoteDb" );
+    n.set_name( "ATQuoteDb" );
 
     if( parser.MoveToFirstResponse() == true ) {
         JSONNode recs( JSON_ARRAY );
@@ -524,7 +525,7 @@ JSONNode Requestor::jsonifyAtQuoteDb( LPATQUOTEDB_RESPONSE pResponse,
                                 ATStreamResponseType responseType,
                                 LPATMARKET_MOVERS_STREAM_RESPONSE pResponse ) {
     JSONNode n( JSON_NODE );
-    n.push_back( JSONNode( "messageId", "atMarketMoversStream" ) );
+    n.push_back( JSONNode( "messageId", "ATMarketMoversStream" ) );
     n.push_back( JSONNode( "origRequest", origRequest ) );
     n.push_back( jsonifyStreamResponseType( responseType ) );
 
@@ -555,7 +556,7 @@ JSONNode Requestor::jsonifyStreamResponseType( ATStreamResponseType responseType
                                     LPATQUOTESTREAM_RESPONSE pResponse,
                                     uint32_t responseCount ) {
     JSONNode n( JSON_NODE );
-    n.push_back( JSONNode( "messageId", "atQuoteStream" ) );
+    n.push_back( JSONNode( "messageId", "ATQuoteStream" ) );
     n.push_back( JSONNode( "origRequest", origRequest ) );
     n.push_back( jsonifyStreamResponseType( responseType ) );
 
@@ -570,7 +571,7 @@ JSONNode Requestor::jsonifyStreamResponseType( ATStreamResponseType responseType
 JSONNode Requestor::jsonifyAtQuoteStream( LPATQUOTESTREAM_RESPONSE pResponse,
                                           ATStreamResponseType responseType ) {
     JSONNode n( JSON_NODE );
-    n.set_name( "atQuoteStream" );
+    n.set_name( "ATQuoteStream" );
 
     if( responseType == StreamResponseSuccess ) {
         ATQuoteStreamResponseParser parser( pResponse );
@@ -595,7 +596,7 @@ JSONNode Requestor::jsonifyAtQuoteStream( LPATQUOTESTREAM_RESPONSE pResponse,
 
 /*virtual*/ void Requestor::OnATRequestTimeout( uint64_t origRequest ) {
     JSONNode n( JSON_NODE );
-    n.push_back( JSONNode( "messageId", "atRequestTimeout" ) );
+    n.push_back( JSONNode( "messageId", "ATRequestTimeout" ) );
     n.push_back( JSONNode( "origRequest", origRequest ) );
     m_pInboundMsgs->push( n );
 }
