@@ -27,6 +27,7 @@ private:
 
     JSONNode jsonifyAtQuoteStreamTradeUpdate( LPATQUOTESTREAM_TRADE_UPDATE pUpdate );
     JSONNode jsonifyAtQuoteStreamQuoteUpdate( LPATQUOTESTREAM_QUOTE_UPDATE pUpdate );
+    JSONNode jsonifyAtMarketMoversStreamUpdate( LPATMARKET_MOVERS_STREAM_UPDATE pUpdate );
 
 private:
     const APISession &m_session;
