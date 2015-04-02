@@ -2,6 +2,7 @@
 #include <node.h>
 #include "NodeActivetick.h"
 #include "import/libjson/libjson.h"
+#include "import/example/Helper.h"
 
 using namespace v8;
 
@@ -61,7 +62,7 @@ void NodeActivetick::SessionInit( const FunctionCallbackInfo<Value> &args ) {
 
     apiUserid = *v8::String::Utf8Value( args[0]->ToString() );
     serverIpAddress = *String::Utf8Value( args[1]->ToString() );
-    serverPort = args[2]->Int32Value();
+    serverPort = args[2]->Uint32Value();
     userid = *String::Utf8Value( args[3]->ToString() );
     password = *String::Utf8Value( args[4]->ToString() );
     
@@ -76,6 +77,63 @@ void NodeActivetick::GetSessionHandle( const FunctionCallbackInfo<Value> &args )
     NodeActivetick *obj = ObjectWrap::Unwrap<NodeActivetick>( args.Holder() );
     args.GetReturnValue().Set( Integer::New( isolate, obj->m_session.GetSessionHandle() ) );
 }
+
+// -- requestor --
+void NodeActivetick::CloseAllATRequests( const FunctionCallbackInfo<Value> &args ) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope( isolate );
+    NodeActivetick *obj = ObjectWrap::Unwrap<NodeActivetick>( args.Holder() );
+    obj->m_requestor.CloseAllATRequests();
+}
+
+void NodeActivetick::CloseATRequest( const FunctionCallbackInfo<Value> &args ) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope( isolate );
+    NodeActivetick *obj = ObjectWrap::Unwrap<NodeActivetick>( args.Holder() );
+
+    // TODO: incorrect type assignment
+    uint64_t request = args[0]->IntegerValue();
+
+    obj->m_requestor.CloseATRequest( request );
+}
+
+void NodeActivetick::SendATBarHistoryDbRequest( const FunctionCallbackInfo<Value> &args ) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope( isolate );
+    NodeActivetick *obj = ObjectWrap::Unwrap<NodeActivetick>( args.Holder() );
+
+    std::string symbol( *String::Utf8Value( args[0]->ToString() ) );
+
+    ATBarHistoryType type;
+    std::string historyType( *String::Utf8Value( args[1]->ToString() ) );
+    if ( historyType == "BarHistoryIntraday" )
+        type = BarHistoryIntraday;
+    else if ( historyType == "BarHistoryDaily" )
+        type = BarHistoryDaily;
+    else if ( historyType == "BarHistoryWeekly" )
+        type = BarHistoryWeekly;
+    else {
+        type = BarHistoryIntraday;
+    }
+
+    uint32_t minutes = args[2]->Uint32Value();
+
+    std::string beginTime( *String::Utf8Value( args[3]->ToString() ) );
+    std::string endTime( *String::Utf8Value( args[4]->ToString() ) );
+
+    uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
+    if ( args[5]->IsUint32() )
+        timeout = args[5]->Uint32Value();
+
+    ATTIME atBeginTime = Helper::StringToATTime(beginTime);
+    ATTIME atEndTime = Helper::StringToATTime(endTime);
+
+    ATSYMBOL atSymbol = Helper::StringToSymbol(symbol);
+    uint64_t request = obj->m_requestor.SendATBarHistoryDbRequest( atSymbol, type, (uint8_t)minutes, atBeginTime, atEndTime, timeout );
+
+    args.GetReturnValue().Set( Integer::New( isolate, request) );
+}
+
 void NodeActivetick::GetMsg( const FunctionCallbackInfo<Value> &args ) {
     Isolate* isolate = Isolate::GetCurrent();
     HandleScope scope( isolate );
