@@ -8,9 +8,7 @@ fi
 
 if [ "$(node -v | cut -c 1-5)" = "v0.10" ]; then
 echo "Node 0.10 detected"
-mv ./NodeActivetickTen.cpp ./NodeActivetick.cpp
-mv ./NodeActivetickTen.h ./NodeActivetick.h
-mv ./AtJsonParserTen.cpp ./AtJsonParser.cpp
+cp ./bindingTen.gyp ./binding.gyp
 fi
 
 cd $DIR
