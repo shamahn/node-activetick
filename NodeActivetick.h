@@ -1,6 +1,7 @@
 #pragma once
 #include <queue>
 #include <node.h>
+#include <node_object_wrap.h>
 
 #include "Requestor.h"
 #include "Session.h"
@@ -18,33 +19,34 @@ public:
     static void Init( Handle<Object> exports );
 
 private:
-    NodeActivetick();
+    explicit NodeActivetick();
     ~NodeActivetick();
 
-    static Handle<Value> New( const Arguments &args );
+    static void New( const FunctionCallbackInfo<Value> &args );
+    static Persistent<Function> constructor;
 
     // -- session --
-    static Handle<Value> SessionInit( const Arguments &args );
-    static Handle<Value> GetSessionHandle( const Arguments &args );
+    static void SessionInit( const FunctionCallbackInfo<Value> &args );
+    static void GetSessionHandle( const FunctionCallbackInfo<Value> &args );
 
     // -- requestor --
-    static Handle<Value> CloseAllATRequests ( const Arguments &args );
-    static Handle<Value> CloseATRequest ( const Arguments &args );
-    static Handle<Value> SendATBarHistoryDbRequest ( const Arguments &args );
-    static Handle<Value> SendATLoginRequest ( const Arguments &args );
-    static Handle<Value> SendATMarketHolidaysRequest ( const Arguments &args );
-    static Handle<Value> SendATMarketMoversDbRequest ( const Arguments &args );
-    static Handle<Value> SendATMarketMoversStreamRequest ( const Arguments &args );
-    static Handle<Value> SendATQuoteDbRequest ( const Arguments &args );
-    static Handle<Value> SendATQuoteStreamRequest ( const Arguments &args );
-    static Handle<Value> SendATTickHistoryDbRequest ( const Arguments &args );
-    static Handle<Value> SendATSectorListRequest ( const Arguments &args );
-    static Handle<Value> SendATConstituentListRequest ( const Arguments &args );
+    static void CloseAllATRequests ( const FunctionCallbackInfo<Value> &args );
+    static void CloseATRequest ( const FunctionCallbackInfo<Value> &args );
+    static void SendATBarHistoryDbRequest ( const FunctionCallbackInfo<Value> &args );
+    static void SendATLoginRequest ( const FunctionCallbackInfo<Value> &args );
+    static void SendATMarketHolidaysRequest ( const FunctionCallbackInfo<Value> &args );
+    static void SendATMarketMoversDbRequest ( const FunctionCallbackInfo<Value> &args );
+    static void SendATMarketMoversStreamRequest ( const FunctionCallbackInfo<Value> &args );
+    static void SendATQuoteDbRequest ( const FunctionCallbackInfo<Value> &args );
+    static void SendATQuoteStreamRequest ( const FunctionCallbackInfo<Value> &args );
+    static void SendATTickHistoryDbRequest ( const FunctionCallbackInfo<Value> &args );
+    static void SendATSectorListRequest ( const FunctionCallbackInfo<Value> &args );
+    static void SendATConstituentListRequest ( const FunctionCallbackInfo<Value> &args );
 
     // -- streamer --
 
 
-    static Handle<Value> PopMsg( const Arguments &args );
+    static void GetMsg( const FunctionCallbackInfo<Value> &args );
 
 private:
     JSONNode getInboundMsg();

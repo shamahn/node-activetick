@@ -9,8 +9,7 @@ AtJsonParser::~AtJsonParser()
 }
 
 Handle<Object> AtJsonParser::parse( const JSONNode &n ) {
-    Isolate* isolate = Isolate::GetCurrent();
-    Handle<Object> retData = Object::New( isolate );
+    Handle<Object> retData = Object::New();
     JSONNode::const_iterator i = n.begin();
     while ( i != n.end() ) {
         std::string node_name = i->name();
@@ -49,23 +48,23 @@ Handle<Object> AtJsonParser::parse( const JSONNode &n ) {
              node_name == "lastDateTime"
              
               ) {
-            retData->Set( String::NewFromUtf8( isolate, node_name.c_str() ), parse( *i ) );
+            retData->Set( String::NewSymbol( node_name.c_str() ), parse( *i ) );
         }
         else if ( filterAsString( node_name ) ) {
-            retData->Set( String::NewFromUtf8( isolate, node_name.c_str() ),
-                          String::NewFromUtf8( isolate, i->as_string().c_str() ) );
+            retData->Set( String::NewSymbol( node_name.c_str() ),
+                          String::New( i->as_string().c_str() ) );
         }
         else if ( filterAsNumber( node_name ) ) {
-            retData->Set( String::NewFromUtf8( isolate, node_name.c_str() ),
-                          Number::New( isolate, i->as_float() ) );
+            retData->Set( String::NewSymbol( node_name.c_str() ),
+                          Number::New( i->as_float() ) );
         }
         else if ( filterAsInteger( node_name ) ) {
-            retData->Set( String::NewFromUtf8( isolate, node_name.c_str() ),
-                          Integer::New( isolate, i->as_int() ) );
+            retData->Set( String::NewSymbol( node_name.c_str() ),
+                          Integer::New( i->as_int() ) );
         }
         else if ( filterAsBoolean( node_name ) ) {
-            retData->Set( String::NewFromUtf8( isolate, node_name.c_str() ),
-                          Boolean::New( isolate, i->as_bool() ) );
+            retData->Set( String::NewSymbol( node_name.c_str() ),
+                          Boolean::New( i->as_bool() ) );
         }
         ++i;
     }

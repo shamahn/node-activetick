@@ -45,6 +45,14 @@
             ]
           }
         }],
+        ['OS=="linux"', {
+          'link_settings': {
+            'libraries': [
+              "../import/bin/libActiveTickServerAPI.so",
+              "-lpthread"
+            ]
+          }
+        }],
       ]
     }
   ]
