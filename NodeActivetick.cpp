@@ -1,4 +1,6 @@
 #include <cstring>
+#include <locale>
+#include <sstream>
 #include <node.h>
 #include "NodeActivetick.h"
 #include "import/libjson/libjson.h"
@@ -131,8 +133,53 @@ void NodeActivetick::SendATBarHistoryDbRequest( const FunctionCallbackInfo<Value
     ATSYMBOL atSymbol = Helper::StringToSymbol(symbol);
     uint64_t request = obj->m_requestor.SendATBarHistoryDbRequest( atSymbol, type, (uint8_t)minutes, atBeginTime, atEndTime, timeout );
 
-    args.GetReturnValue().Set( Integer::New( isolate, request) );
+    args.GetReturnValue().Set( Integer::New( isolate, request ) );
 }
+
+void NodeActivetick::SendATLoginRequest( const FunctionCallbackInfo<Value> &args ) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope( isolate );
+    NodeActivetick *obj = ObjectWrap::Unwrap<NodeActivetick>( args.Holder() );
+
+    std::string userid = *String::Utf8Value( args[0]->ToString() );
+    std::string passwd = *String::Utf8Value( args[1]->ToString() );
+    uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
+    if ( args[2]->IsUint32() )
+        timeout = args[2]->Uint32Value();
+
+    uint64_t request = obj->m_requestor.SendATLoginRequest( &Helper::ConvertString(userid).front(),
+                                                            &Helper::ConvertString(passwd).front(), timeout );
+    args.GetReturnValue().Set( Integer::New( isolate, request ) );
+}
+
+void NodeActivetick::SendATMarketHolidaysRequest( const FunctionCallbackInfo<Value> &args ) {
+}
+
+void NodeActivetick::SendATMarketMoversDbRequest( const FunctionCallbackInfo<Value> &args ) {
+}
+
+void NodeActivetick::SendATMarketMoversStreamRequest( const FunctionCallbackInfo<Value> &args ) {
+}
+
+void NodeActivetick::SendATQuoteDbRequest ( const FunctionCallbackInfo<Value> &args ) {
+}
+
+void NodeActivetick::SendATQuoteStreamRequest ( const FunctionCallbackInfo<Value> &args ) {
+}
+
+void NodeActivetick::SendATTickHistoryDbRequest ( const FunctionCallbackInfo<Value> &args ) {
+}
+
+void NodeActivetick::SendATSectorListRequest ( const FunctionCallbackInfo<Value> &args ) {
+}
+
+void NodeActivetick::SendATConstituentListRequest ( const FunctionCallbackInfo<Value> &args ) {
+}
+
+// -- Streamer --
+
+
+
 
 void NodeActivetick::GetMsg( const FunctionCallbackInfo<Value> &args ) {
     Isolate* isolate = Isolate::GetCurrent();
@@ -148,7 +195,10 @@ void NodeActivetick::GetMsg( const FunctionCallbackInfo<Value> &args ) {
     args.GetReturnValue().Set( retData );
 }
 
-//--- helper
+///////////////////////////////////////////////////////////////////////////////
+// Helper methods
+///////////////////////////////////////////////////////////////////////////////
+
 JSONNode NodeActivetick::getInboundMsg() {
     JSONNode popped;
     if ( !this->m_inboundMsgs.empty() ) {
