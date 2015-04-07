@@ -600,3 +600,31 @@ JSONNode Requestor::jsonifyAtQuoteStream( LPATQUOTESTREAM_RESPONSE pResponse,
     n.push_back( JSONNode( "origRequest", origRequest ) );
     m_pInboundMsgs->push( n );
 }
+
+/*virtual*/ void Requestor::OnATLoginResponse( uint64_t origRequest,
+                                               LPATLOGIN_RESPONSE pResponse ) {
+    JSONNode n( JSON_NODE );
+    n.push_back( JSONNode( "messageId", "ATLoginResponse" ) );
+    n.push_back( JSONNode( "origRequest", origRequest ) );
+
+    // TODO add LPATLOGIN_RESPONSE permissions  parsing
+    std::string strLoginResponseType;
+    switch(pResponse->loginResponse)
+    {
+    case LoginResponseSuccess: strLoginResponseType = "LoginResponseSuccess"; break;
+    case LoginResponseInvalidUserid: strLoginResponseType = "LoginResponseInvalidUserid"; break;
+    case LoginResponseInvalidPassword: strLoginResponseType = "LoginResponseInvalidPassword"; break;
+    case LoginResponseInvalidRequest: strLoginResponseType = "LoginResponseInvalidRequest"; break;
+    case LoginResponseLoginDenied: strLoginResponseType = "LoginResponseLoginDenied"; break;
+    case LoginResponseServerError: strLoginResponseType = "LoginResponseServerError"; break;
+    default: strLoginResponseType = "unknown"; break;
+    }
+    JSONNode resp( JSON_NODE );
+    resp.set_name( "response" );
+    resp.push_back( JSONNode( "name", "ATQuoteDbResponseType" ) );
+    resp.push_back( JSONNode( "enum", pResponse->loginResponse ) );
+    resp.push_back( JSONNode( "type", strLoginResponseType ) );
+    n.push_back( resp );
+
+    m_pInboundMsgs->push( n );
+}

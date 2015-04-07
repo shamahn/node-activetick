@@ -23,7 +23,7 @@ private:
                         LPATBARHISTORY_RESPONSE pResponse);
     virtual void OnATLoginResponse(
                         uint64_t origRequest,
-                        LPATLOGIN_RESPONSE pResponse) {};
+                        LPATLOGIN_RESPONSE pResponse);
     virtual void OnAtMarketHolidaysResponse(
                         uint64_t origRequest,
                         LPATMARKET_HOLIDAYSLIST_ITEM pItems,
