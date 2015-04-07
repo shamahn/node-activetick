@@ -628,3 +628,37 @@ JSONNode Requestor::jsonifyAtQuoteStream( LPATQUOTESTREAM_RESPONSE pResponse,
 
     m_pInboundMsgs->push( n );
 }
+
+/*virtual*/ void Requestor::OnAtMarketHolidaysResponse( uint64_t origRequest,
+                                                        LPATMARKET_HOLIDAYSLIST_ITEM pItems,
+                                                        uint32_t itemsCount ) {
+    JSONNode n( JSON_NODE );
+    n.push_back( JSONNode( "messageId", "AtMarketHolidaysResponse" ) );
+    n.push_back( JSONNode( "origRequest", origRequest ) );
+
+    JSONNode data( JSON_NODE );
+    data.set_name( "data" );
+    data.push_back( jsonifyAtMarketHolidays( pItems, itemsCount ) );
+    n.push_back( data );
+
+    m_pInboundMsgs->push( n );
+}
+
+JSONNode Requestor::jsonifyAtMarketHolidays( LPATMARKET_HOLIDAYSLIST_ITEM pItems,
+                                             uint32_t itemsCount ) {
+    JSONNode n( JSON_ARRAY );
+    n.set_name( "AtMarketHolidays" );
+
+    for(uint32_t i = 0; i < itemsCount; ++i) {
+        JSONNode holiday( JSON_NODE );
+        holiday.push_back( JSONNode( "symbolType", pItems[i].symbolType ) );
+        holiday.push_back( JSONNode( "exchangeType", pItems[i].exchangeType ));
+        holiday.push_back( JSONNode( "countryType", pItems[i].countryType ) );
+        holiday.push_back( this->m_jsonifier.jsonifyAtTime( "beginDateTime", &pItems[i].beginDateTime ) );
+        holiday.push_back( this->m_jsonifier.jsonifyAtTime( "endDateTime", &pItems[i].endDateTime ) );
+
+        n.push_back( holiday );
+    }
+
+    return n;
+}

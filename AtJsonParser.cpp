@@ -46,8 +46,10 @@ Handle<Object> AtJsonParser::parse( const JSONNode &n ) {
              node_name == "lastUpdateTime" ||
              node_name == "marketMovers" ||
              node_name == "closePrice" ||
-             node_name == "lastDateTime"
-             
+             node_name == "lastDateTime" ||
+             node_name == "AtMarketHolidays" ||
+             node_name == "beginDateTime" ||
+             node_name == "endDateTime"
               ) {
             retData->Set( String::NewFromUtf8( isolate, node_name.c_str() ), parse( *i ) );
         }

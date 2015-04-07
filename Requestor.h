@@ -27,7 +27,7 @@ private:
     virtual void OnAtMarketHolidaysResponse(
                         uint64_t origRequest,
                         LPATMARKET_HOLIDAYSLIST_ITEM pItems,
-                        uint32_t itemsCount) {};
+                        uint32_t itemsCount);
     virtual void OnATMarketMoversDbResponse(
                         uint64_t origRequest,
                         ATMarketMoversDbResponseType responseType,
@@ -68,6 +68,7 @@ private:
     JSONNode jsonifyStreamResponseType( ATStreamResponseType responseType );
     JSONNode jsonifyAtQuoteStream( LPATQUOTESTREAM_RESPONSE pResponse,
                                    ATStreamResponseType responseType );
+    JSONNode jsonifyAtMarketHolidays( LPATMARKET_HOLIDAYSLIST_ITEM pItems, uint32_t itemsCount );
 
 private:
     static Jsonifier m_jsonifier;
