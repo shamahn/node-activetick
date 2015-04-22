@@ -153,6 +153,30 @@ void NodeActivetick::SendATLoginRequest( const FunctionCallbackInfo<Value> &args
 }
 
 void NodeActivetick::SendATMarketHolidaysRequest( const FunctionCallbackInfo<Value> &args ) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope( isolate );
+    NodeActivetick *obj = ObjectWrap::Unwrap<NodeActivetick>( args.Holder() );
+
+    uint8_t yearsGoingBack = (uint8_t)args[0]->Uint32Value();
+    uint8_t yearsGoingFwd = (uint8_t)args[1]->Uint32Value();
+
+    
+    uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
+    if ( args[4]->IsUint32() )
+        timeout = args[4]->Uint32Value();
+
+
+    std::string exchangeStr( *String::Utf8Value( args[2]->ToString() ) );
+    std::string countryStr( *String::Utf8Value( args[3]->ToString() ) );
+
+    ATExchangeType exchangeType = obj->m_enumMap.toAtExchange(exchangeStr);
+    ATCountryType countryType = obj->m_enumMap.toAtCountry(countryStr);
+
+    uint64_t request = obj->m_requestor.SendATMarketHolidaysRequest(
+                           yearsGoingBack, yearsGoingFwd, exchangeType,
+                           countryType, timeout );
+    
+    args.GetReturnValue().Set( Integer::New( isolate, request ) );
 }
 
 void NodeActivetick::SendATMarketMoversDbRequest( const FunctionCallbackInfo<Value> &args ) {
@@ -208,3 +232,16 @@ JSONNode NodeActivetick::getInboundMsg() {
     }
     return popped;
 }
+
+char *NodeActivetick::getChar( v8::Local<v8::Value> value, const char *fallback ) {
+    if ( value->IsString() ) {
+        v8::String::Utf8Value string( value );
+        char *str  = ( char * ) malloc( string.length() + 1 );
+        std::strcpy( str, *string );
+        return str;
+    }
+    char *str = ( char * ) malloc( std::strlen( fallback ) + 1 );
+    std::strcpy( str, fallback );
+    return str;
+}
+

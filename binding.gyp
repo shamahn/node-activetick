@@ -10,6 +10,7 @@
                   ,"Streamer.cpp"
                   ,"AtJsonParser.cpp"
                   ,"Jsonifier.cpp"
+                  ,"AtEnumConverter.cpp"
                   ,"import/example/Helper.cpp"
                   ,"import/libjson/_internal/Source/JSONAllocator.cpp"
                   ,"import/libjson/_internal/Source/JSONChildren.cpp"

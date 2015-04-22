@@ -7,6 +7,7 @@
 #include "Session.h"
 #include "Streamer.h"
 #include "AtJsonParser.h"
+#include "AtEnumConverter.h"
 
 #include <ActiveTickServerAPI/ActiveTickServerAPI.h>
 #include "import/example/Helper.h"
@@ -50,6 +51,7 @@ private:
 
 private:
     JSONNode getInboundMsg();
+    char *getChar( v8::Local<v8::Value> value, const char *fallback );
 
 private:
     APISession m_session;
@@ -58,4 +60,5 @@ private:
 
     AtJsonParser m_parser;
     std::queue< JSONNode > m_inboundMsgs;
+    AtEnumConverter m_enumMap;
 };
