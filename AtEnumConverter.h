@@ -13,11 +13,13 @@ public:
     ATCountryType toAtCountry( std::string countryType );
     ATStreamRequestType toAtStreamRequest( std::string requestType );
     ATQuoteFieldType toAtQuoteField( std::string quoteFieldType );
+    ATCursorType toAtCursor( std::string cursorType );
 
 private:
     std::map<std::string, ATExchangeType> m_strToExchange;
     std::map<std::string, ATCountryType> m_strToCountry;
     std::map<std::string, ATStreamRequestType> m_strToStreamRequest;
     std::map<std::string, ATQuoteFieldType> m_strToQuoteField;
+    std::map<std::string, ATCursorType> m_strToCursor;
 
 };

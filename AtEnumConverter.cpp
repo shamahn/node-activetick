@@ -363,6 +363,9 @@ AtEnumConverter::AtEnumConverter() {
     this->m_strToQuoteField.insert( std::pair<std::string, ATQuoteFieldType>("QuoteFieldCashFlowFinancialFinancingActivitiesOtherFinancingActivities", QuoteFieldCashFlowFinancialFinancingActivitiesOtherFinancingActivities) );
     this->m_strToQuoteField.insert( std::pair<std::string, ATQuoteFieldType>("QuoteFieldCashFlowFinancialFinancingActivitiesNetChangeInCashAndEquivalents", QuoteFieldCashFlowFinancialFinancingActivitiesNetChangeInCashAndEquivalents) );
     this->m_strToQuoteField.insert( std::pair<std::string, ATQuoteFieldType>("QuoteFieldCashFlowDate", QuoteFieldCashFlowDate) );
+
+    this->m_strToCursor.insert( std::pair<std::string, ATCursorType>("CursorForward", CursorForward) );
+    this->m_strToCursor.insert( std::pair<std::string, ATCursorType>("CursorBackward", CursorBackward) );
 }
 
 AtEnumConverter::~AtEnumConverter() {
@@ -389,5 +392,11 @@ ATStreamRequestType AtEnumConverter::toAtStreamRequest( std::string requestType 
 ATQuoteFieldType AtEnumConverter::toAtQuoteField( std::string quoteFieldType ) {
     ATQuoteFieldType retVal;
     retVal = this->m_strToQuoteField[ quoteFieldType ]; // TODO catch for unknown type
+    return retVal;
+}
+
+ATCursorType AtEnumConverter::toAtCursor( std::string cursorType ) {
+    ATCursorType retVal;
+    retVal = this->m_strToCursor[ cursorType ];
     return retVal;
 }
