@@ -124,7 +124,7 @@ void NodeActivetick::SendATBarHistoryDbRequest( const FunctionCallbackInfo<Value
     std::string endTime( *String::Utf8Value( args[4]->ToString() ) );
 
     uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
-    if ( args[5]->IsUint32() )
+    if ( args.Length() == 6 && args[5]->IsUint32() )
         timeout = args[5]->Uint32Value();
 
     ATTIME atBeginTime = Helper::StringToATTime(beginTime);
@@ -144,7 +144,7 @@ void NodeActivetick::SendATLoginRequest( const FunctionCallbackInfo<Value> &args
     std::string userid = *String::Utf8Value( args[0]->ToString() );
     std::string passwd = *String::Utf8Value( args[1]->ToString() );
     uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
-    if ( args[2]->IsUint32() )
+    if ( args.Length() == 3 && args[2]->IsUint32() )
         timeout = args[2]->Uint32Value();
 
     uint64_t request = obj->m_requestor.SendATLoginRequest( &Helper::ConvertString(userid).front(),
@@ -162,7 +162,7 @@ void NodeActivetick::SendATMarketHolidaysRequest( const FunctionCallbackInfo<Val
 
     
     uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
-    if ( args[4]->IsUint32() )
+    if ( args.Length() == 5 && args[4]->IsUint32() )
         timeout = args[4]->Uint32Value();
 
 
@@ -189,7 +189,7 @@ void NodeActivetick::SendATMarketMoversDbRequest( const FunctionCallbackInfo<Val
     std::vector<ATSYMBOL> atSymbols = Helper::StringToSymbols(symbols);
 
     uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
-    if ( args[1]->IsUint32() )
+    if ( args.Length() == 2 && args[1]->IsUint32() )
         timeout = args[1]->Uint32Value();
 
     uint64_t request = obj->m_requestor.SendATMarketMoversDbRequest(
@@ -210,7 +210,7 @@ void NodeActivetick::SendATMarketMoversStreamRequest( const FunctionCallbackInfo
     ATStreamRequestType requestType = obj->m_enumMap.toAtStreamRequest(requestStr);
 
     uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
-    if ( args[2]->IsUint32() )
+    if ( args.Length() == 3 && args[2]->IsUint32() )
         timeout = args[2]->Uint32Value();
 
     uint64_t request = obj->m_requestor.SendATMarketMoversStreamRequest(
@@ -245,7 +245,7 @@ void NodeActivetick::SendATQuoteDbRequest ( const FunctionCallbackInfo<Value> &a
     fields.push_back(obj->m_enumMap.toAtQuoteField(quoteFieldStr.substr(prevpos)));
 
     uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
-    if ( args[2]->IsUint32() )
+    if ( args.Length() == 3 && args[2]->IsUint32() )
         timeout = args[2]->Uint32Value();
 
     uint64_t request = obj->m_requestor.SendATQuoteDbRequest(
@@ -266,7 +266,7 @@ void NodeActivetick::SendATQuoteStreamRequest ( const FunctionCallbackInfo<Value
     ATStreamRequestType requestType = obj->m_enumMap.toAtStreamRequest(requestStr);
 
     uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
-    if ( args[2]->IsUint32() )
+    if ( args.Length() == 3 && args[2]->IsUint32() )
         timeout = args[2]->Uint32Value();
 
     uint64_t request = obj->m_requestor.SendATQuoteStreamRequest(
@@ -276,6 +276,65 @@ void NodeActivetick::SendATQuoteStreamRequest ( const FunctionCallbackInfo<Value
 }
 
 void NodeActivetick::SendATTickHistoryDbRequest ( const FunctionCallbackInfo<Value> &args ) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope( isolate );
+    NodeActivetick *obj = ObjectWrap::Unwrap<NodeActivetick>( args.Holder() );
+
+    std::string symbol( *String::Utf8Value( args[0]->ToString() ) );
+    ATSYMBOL atSymbol = Helper::StringToSymbol(symbol);
+
+    bool selectTrades = args[1]->BooleanValue();
+    bool selectQuotes = args[2]->BooleanValue();
+
+    uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
+    uint64_t request = -1;
+
+    if ( args[3]->IsString() && args[4]->IsString() ) {
+        std::string beginTime( *String::Utf8Value( args[3]->ToString() ) );
+        std::string endTime( *String::Utf8Value( args[4]->ToString() ) );
+
+        ATTIME atBeginTime = Helper::StringToATTime(beginTime);
+        ATTIME atEndTime = Helper::StringToATTime(endTime);
+
+        if ( args.Length() == 6 && args[5]->IsUint32() )
+            timeout = args[5]->Uint32Value();
+
+        request = obj->m_requestor.SendATTickHistoryDbRequest( atSymbol, selectTrades, selectQuotes, atBeginTime, atEndTime, timeout);
+    } else if ( args[3]->IsUint32() && ( args.Length() == 5 || args.Length() == 4 ) ) {
+        uint32_t recordsWanted = args[3]->Uint32Value();
+
+        if ( args.Length() == 5 && args[4]->IsUint32() )
+            timeout = args[4]->Uint32Value();
+
+        request = obj->m_requestor.SendATTickHistoryDbRequest( atSymbol, selectTrades, selectQuotes, recordsWanted, timeout);
+    } else if ( args[3]->IsString() && args[4]->IsUint32() && args[5]->IsString() ) {
+        std::string beginTime( *String::Utf8Value( args[3]->ToString() ) );
+        ATTIME atBeginTime = Helper::StringToATTime(beginTime);
+
+        uint32_t recordsWanted = args[4]->Uint32Value();
+
+        std::string cursorStr( *String::Utf8Value( args[5]->ToString() ) );
+        ATCursorType cursorType = obj->m_enumMap.toAtCursor( cursorStr );
+
+        if ( args.Length() == 7 && args[6]->IsUint32() )
+            timeout = args[6]->Uint32Value();
+
+        request = obj->m_requestor.SendATTickHistoryDbRequest( atSymbol, selectTrades, selectQuotes, atBeginTime, recordsWanted, cursorType, timeout);
+    } else if ( args[3]->IsUint32() && args[5]->IsString() && ( args.Length() == 7 || args.Length() == 6 ) ) {
+        uint32_t pagesWanted = args[3]->Uint32Value();
+
+        uint64_t offset = args[4]->IntegerValue();
+
+        std::string dbdateStr( *String::Utf8Value( args[5]->ToString() ) );
+        ATTIME dbdate = Helper::StringToATTime(dbdateStr);
+
+        if ( args.Length() == 7 && args[6]->IsUint32() )
+            timeout = args[6]->Uint32Value();
+
+        request = obj->m_requestor.SendATTickHistoryDbRequest( atSymbol, selectTrades, selectQuotes, pagesWanted, offset, dbdate, timeout);
+    }
+
+    args.GetReturnValue().Set( Integer::New( isolate, request ) );
 }
 
 void NodeActivetick::SendATSectorListRequest ( const FunctionCallbackInfo<Value> &args ) {
