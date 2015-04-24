@@ -186,16 +186,14 @@ void NodeActivetick::SendATMarketMoversDbRequest( const FunctionCallbackInfo<Val
 
     // QUESTION is atSymbol.symbolType = SymbolTopMarketMovers; necessary?
     std::string symbols( *String::Utf8Value( args[0]->ToString() ) );
-    std::vector<ATSYMBOL> atSymbolsVector = Helper::StringToSymbols(symbols);
-    ATSYMBOL* atSymbols = &atSymbolsVector[0];
+    std::vector<ATSYMBOL> atSymbols = Helper::StringToSymbols(symbols);
 
-    uint16_t symbolCount = (uint16_t)args[1]->Uint32Value();
     uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
-    if ( args[2]->IsUint32() )
-        timeout = args[2]->Uint32Value();
+    if ( args[1]->IsUint32() )
+        timeout = args[1]->Uint32Value();
 
     uint64_t request = obj->m_requestor.SendATMarketMoversDbRequest(
-                            atSymbols, symbolCount, timeout );
+                            atSymbols.data(), (uint16_t)symbols.size(), timeout );
 
     args.GetReturnValue().Set( Integer::New( isolate, request ) );
 }
@@ -227,42 +225,54 @@ void NodeActivetick::SendATQuoteDbRequest ( const FunctionCallbackInfo<Value> &a
     NodeActivetick *obj = ObjectWrap::Unwrap<NodeActivetick>( args.Holder() );
 
     std::string symbols( *String::Utf8Value( args[0]->ToString() ) );
-    std::vector<ATSYMBOL> atSymbolsVector = Helper::StringToSymbols(symbols);
-    ATSYMBOL* atSymbols = &atSymbolsVector[0];
+    std::vector<ATSYMBOL> atSymbols = Helper::StringToSymbols(symbols);
 
-    uint16_t symbolCount = (uint16_t)args[1]->Uint32Value();
-
-    std::string quoteFieldStr( *String::Utf8Value( args[2]->ToString() ) );
+    std::string quoteFieldStr( *String::Utf8Value( args[1]->ToString() ) );
     //
-    std::vector<ATQuoteFieldType> atQuoteFieldVector;
+    std::vector<ATQuoteFieldType> fields;
     std::size_t pos = 0;
     std::size_t prevpos = 0;
 
     while((pos = quoteFieldStr.find(",", pos)) != std::string::npos)
     {
         std::string field = quoteFieldStr.substr(prevpos, pos - prevpos);
-        atQuoteFieldVector.push_back(obj->m_enumMap.toAtQuoteField(field));
+        fields.push_back(obj->m_enumMap.toAtQuoteField(field));
         
         ++pos;
         prevpos = pos;              
     }   
 
-    atQuoteFieldVector.push_back(obj->m_enumMap.toAtQuoteField(quoteFieldStr.substr(prevpos)));
-    ATQuoteFieldType* fields = &atQuoteFieldVector[0];
-
-    uint16_t fieldCount = (uint16_t)args[3]->Uint32Value();
+    fields.push_back(obj->m_enumMap.toAtQuoteField(quoteFieldStr.substr(prevpos)));
 
     uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
     if ( args[2]->IsUint32() )
         timeout = args[2]->Uint32Value();
 
     uint64_t request = obj->m_requestor.SendATQuoteDbRequest(
-                            atSymbols, symbolCount, fields, fieldCount, timeout );
+                            atSymbols.data(), (uint16_t)atSymbols.size(), fields.data(), (uint16_t)fields.size(), timeout );
 
     args.GetReturnValue().Set( Integer::New( isolate, request ) );
 }
 
 void NodeActivetick::SendATQuoteStreamRequest ( const FunctionCallbackInfo<Value> &args ) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope( isolate );
+    NodeActivetick *obj = ObjectWrap::Unwrap<NodeActivetick>( args.Holder() );
+
+    std::string symbols( *String::Utf8Value( args[0]->ToString() ) );
+    std::vector<ATSYMBOL> atSymbols = Helper::StringToSymbols(symbols);
+
+    std::string requestStr( *String::Utf8Value( args[1]->ToString() ) );
+    ATStreamRequestType requestType = obj->m_enumMap.toAtStreamRequest(requestStr);
+
+    uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
+    if ( args[2]->IsUint32() )
+        timeout = args[2]->Uint32Value();
+
+    uint64_t request = obj->m_requestor.SendATQuoteStreamRequest(
+                            atSymbols.data(), (uint16_t)atSymbols.size(), requestType, timeout);
+
+    args.GetReturnValue().Set( Integer::New( isolate, request ) );
 }
 
 void NodeActivetick::SendATTickHistoryDbRequest ( const FunctionCallbackInfo<Value> &args ) {
