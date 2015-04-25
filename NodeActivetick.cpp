@@ -287,7 +287,7 @@ void NodeActivetick::SendATTickHistoryDbRequest ( const FunctionCallbackInfo<Val
     bool selectQuotes = args[2]->BooleanValue();
 
     uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
-    uint64_t request = -1;
+    uint64_t request = 0;
 
     if ( args[3]->IsString() && args[4]->IsString() ) {
         std::string beginTime( *String::Utf8Value( args[3]->ToString() ) );
@@ -338,9 +338,55 @@ void NodeActivetick::SendATTickHistoryDbRequest ( const FunctionCallbackInfo<Val
 }
 
 void NodeActivetick::SendATSectorListRequest ( const FunctionCallbackInfo<Value> &args ) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope( isolate );
+    NodeActivetick *obj = ObjectWrap::Unwrap<NodeActivetick>( args.Holder() );
+
+    uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
+    if ( args.Length() == 1 && args[0]->IsUint32() )
+        timeout = args[0]->Uint32Value();
+
+    uint64_t request = obj->m_requestor.SendATSectorListRequest(timeout);
+    args.GetReturnValue().Set( Integer::New( isolate, request ) );
 }
 
 void NodeActivetick::SendATConstituentListRequest ( const FunctionCallbackInfo<Value> &args ) {
+    Isolate* isolate = Isolate::GetCurrent();
+    HandleScope scope( isolate );
+    NodeActivetick *obj = ObjectWrap::Unwrap<NodeActivetick>( args.Holder() );
+
+    std::string constituentList( *String::Utf8Value( args[0]->ToString() ) );
+    ATConstituentListType atConstituentList = obj->m_enumMap.toAtConstituentList( constituentList );
+
+    uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
+    if ( args.Length() == 3 && args[2]->IsUint32() )
+            timeout = args[2]->Uint32Value();
+
+    uint64_t request = 0;
+
+    std::string asciikey( *String::Utf8Value( args[1]->ToString() ) );
+
+    if ( atConstituentList == ATConstituentListSector ) {
+        std::string asciikey( *String::Utf8Value( args[1]->ToString() ) );
+
+        for(std::string::size_type i = 0; i < asciikey.length(); ++i)
+        {
+            if(asciikey[i] == '_')
+                asciikey[i] = ' ';
+        }
+
+        wchar16_t key[ATSymbolMaxLength];
+        Helper::ConvertString(asciikey.c_str(), key, ATSymbolMaxLength);
+
+        request = obj->m_requestor.SendATConstituentListRequest(atConstituentList, key, timeout);
+    } else if ( atConstituentList == ATConstituentListOptionChain || 
+                atConstituentList == ATConstituentListIndex ) {
+        wchar16_t symbol[ATSymbolMaxLength];
+        Helper::ConvertString(asciikey.c_str(), symbol, ATSymbolMaxLength);
+
+        request = obj->m_requestor.SendATConstituentListRequest(ATConstituentListOptionChain, symbol, timeout);
+    }
+    args.GetReturnValue().Set( Integer::New( isolate, request ) );
 }
 
 // -- Streamer --
