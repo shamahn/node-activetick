@@ -2,15 +2,14 @@
   "targets": [
     {
       "target_name": "NodeActivetickAddon",
-      "sources": [ "NodeActivetickAddon.cpp"
-                  ,"NodeActivetick.cpp"
+      "sources": [ "NodeActivetickAddonTen.cpp"
+                  ,"NodeActivetickTen.cpp"
                   ,"StdAfx.cpp"
                   ,"Session.cpp"
                   ,"Requestor.cpp"
                   ,"Streamer.cpp"
-                  ,"AtJsonParser.cpp"
+                  ,"AtJsonParserTen.cpp"
                   ,"Jsonifier.cpp"
-                  ,"AtEnumConverter.cpp"
                   ,"import/example/Helper.cpp"
                   ,"import/libjson/_internal/Source/JSONAllocator.cpp"
                   ,"import/libjson/_internal/Source/JSONChildren.cpp"
