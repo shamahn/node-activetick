@@ -366,6 +366,10 @@ AtEnumConverter::AtEnumConverter() {
 
     this->m_strToCursor.insert( std::pair<std::string, ATCursorType>("CursorForward", CursorForward) );
     this->m_strToCursor.insert( std::pair<std::string, ATCursorType>("CursorBackward", CursorBackward) );
+
+    this->m_strToConstituentList.insert( std::pair<std::string, ATConstituentListType>("ATConstituentListIndex", ATConstituentListIndex) );
+    this->m_strToConstituentList.insert( std::pair<std::string, ATConstituentListType>("ATConstituentListSector", ATConstituentListSector) );
+    this->m_strToConstituentList.insert( std::pair<std::string, ATConstituentListType>("ATConstituentListOptionChain", ATConstituentListOptionChain) );
 }
 
 AtEnumConverter::~AtEnumConverter() {
@@ -398,5 +402,11 @@ ATQuoteFieldType AtEnumConverter::toAtQuoteField( std::string quoteFieldType ) {
 ATCursorType AtEnumConverter::toAtCursor( std::string cursorType ) {
     ATCursorType retVal;
     retVal = this->m_strToCursor[ cursorType ];
+    return retVal;
+}
+
+ATConstituentListType AtEnumConverter::toAtConstituentList( std::string constituentListType ) {
+    ATConstituentListType retVal;
+    retVal = this->m_strToConstituentList[ constituentListType ];
     return retVal;
 }

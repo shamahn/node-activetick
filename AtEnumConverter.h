@@ -14,6 +14,7 @@ public:
     ATStreamRequestType toAtStreamRequest( std::string requestType );
     ATQuoteFieldType toAtQuoteField( std::string quoteFieldType );
     ATCursorType toAtCursor( std::string cursorType );
+    ATConstituentListType toAtConstituentList( std::string constituentListType );
 
 private:
     std::map<std::string, ATExchangeType> m_strToExchange;
@@ -21,5 +22,6 @@ private:
     std::map<std::string, ATStreamRequestType> m_strToStreamRequest;
     std::map<std::string, ATQuoteFieldType> m_strToQuoteField;
     std::map<std::string, ATCursorType> m_strToCursor;
+    std::map<std::string, ATConstituentListType> m_strToConstituentList;
 
 };
