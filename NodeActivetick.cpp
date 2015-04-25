@@ -30,7 +30,20 @@ void NodeActivetick::Init( Handle<Object> exports ) {
 
     NODE_SET_PROTOTYPE_METHOD( tpl, "sessionInit" , SessionInit );
     NODE_SET_PROTOTYPE_METHOD( tpl, "getSessionHandle" , GetSessionHandle );
+
     NODE_SET_PROTOTYPE_METHOD( tpl, "closeAllATRequests" , CloseAllATRequests );
+    NODE_SET_PROTOTYPE_METHOD( tpl, "closeATRequest", CloseATRequest );
+    NODE_SET_PROTOTYPE_METHOD( tpl, "sendATBarHistoryDbRequest", SendATBarHistoryDbRequest );
+    NODE_SET_PROTOTYPE_METHOD( tpl, "sendATLoginRequest", SendATLoginRequest );
+    NODE_SET_PROTOTYPE_METHOD( tpl, "sendATMarketHolidaysRequest", SendATMarketHolidaysRequest );
+    NODE_SET_PROTOTYPE_METHOD( tpl, "sendATMarketMoversDbRequest", SendATMarketMoversDbRequest );
+    NODE_SET_PROTOTYPE_METHOD( tpl, "sendATMarketMoversStreamRequest", SendATMarketMoversStreamRequest );
+    NODE_SET_PROTOTYPE_METHOD( tpl, "sendATQuoteDbRequest", SendATQuoteDbRequest );
+    NODE_SET_PROTOTYPE_METHOD( tpl, "sendATQuoteStreamRequest", SendATQuoteStreamRequest );
+    NODE_SET_PROTOTYPE_METHOD( tpl, "sendATTickHistoryDbRequest", SendATTickHistoryDbRequest );
+    NODE_SET_PROTOTYPE_METHOD( tpl, "sendATSectorListRequest", SendATSectorListRequest );
+    NODE_SET_PROTOTYPE_METHOD( tpl, "sendATConstituentListRequest", SendATConstituentListRequest );
+
     NODE_SET_PROTOTYPE_METHOD( tpl, "getMsg" , GetMsg );
 
     constructor.Reset( isolate, tpl->GetFunction() );
