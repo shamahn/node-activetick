@@ -118,6 +118,7 @@ void NodeActivetick::SendATBarHistoryDbRequest( const FunctionCallbackInfo<Value
     NodeActivetick *obj = ObjectWrap::Unwrap<NodeActivetick>( args.Holder() );
 
     std::string symbol( *String::Utf8Value( args[0]->ToString() ) );
+    ATSYMBOL atSymbol = Helper::StringToSymbol(symbol);
 
     ATBarHistoryType type;
     std::string historyType( *String::Utf8Value( args[1]->ToString() ) );
@@ -130,21 +131,40 @@ void NodeActivetick::SendATBarHistoryDbRequest( const FunctionCallbackInfo<Value
     else {
         type = BarHistoryIntraday;
     }
+    uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
+    uint64_t request = 0;
 
     uint32_t minutes = args[2]->Uint32Value();
 
-    std::string beginTime( *String::Utf8Value( args[3]->ToString() ) );
-    std::string endTime( *String::Utf8Value( args[4]->ToString() ) );
+    if ( args[3]->IsString() && args[4]->IsString() ) {
+        std::string beginTime( *String::Utf8Value( args[3]->ToString() ) );
+        std::string endTime( *String::Utf8Value( args[4]->ToString() ) );
 
-    uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
-    if ( args.Length() == 6 && args[5]->IsUint32() )
-        timeout = args[5]->Uint32Value();
+        ATTIME atBeginTime = Helper::StringToATTime(beginTime);
+        ATTIME atEndTime = Helper::StringToATTime(endTime);
 
-    ATTIME atBeginTime = Helper::StringToATTime(beginTime);
-    ATTIME atEndTime = Helper::StringToATTime(endTime);
+        if ( args.Length() == 6 && args[5]->IsUint32() )
+            timeout = args[5]->Uint32Value();
+        request = obj->m_requestor.SendATBarHistoryDbRequest( atSymbol, type, (uint8_t)minutes, atBeginTime, atEndTime, timeout );
+    } else if ( args[3]->IsUint32() ) {
+        uint32_t recordsWanted = args[3]->Uint32Value();
 
-    ATSYMBOL atSymbol = Helper::StringToSymbol(symbol);
-    uint64_t request = obj->m_requestor.SendATBarHistoryDbRequest( atSymbol, type, (uint8_t)minutes, atBeginTime, atEndTime, timeout );
+        if ( args.Length() == 5 && args[4]->IsUint32() )
+            timeout = args[4]->Uint32Value();
+        request = obj->m_requestor.SendATBarHistoryDbRequest( atSymbol, type, (uint8_t)minutes, recordsWanted, timeout );
+    } else if ( args[3]->IsString() && args[4]->IsUint32() && args[5]->IsString() ) {
+        std::string beginTime( *String::Utf8Value( args[3]->ToString() ) );
+        ATTIME atBeginTime = Helper::StringToATTime(beginTime);
+
+        uint32_t recordsWanted = args[4]->Uint32Value();
+
+        std::string cursorStr( *String::Utf8Value( args[5]->ToString() ) );
+        ATCursorType cursorType = obj->m_enumMap.toAtCursor( cursorStr );
+
+        if ( args.Length() == 7 && args[6]->IsUint32() )
+            timeout = args[6]->Uint32Value();
+        request = obj->m_requestor.SendATBarHistoryDbRequest( atSymbol, type, (uint8_t)minutes, atBeginTime, recordsWanted, cursorType, timeout );
+    }
 
     args.GetReturnValue().Set( Integer::New( isolate, request ) );
 }
