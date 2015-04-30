@@ -78,8 +78,8 @@ NodeActivetick.prototype = {
     *   "BarHistoryIntraday", "BarHistoryDaily", or "BarHistoryWeekly"
     * @param {int} req[].intradayMinuteCompression - Size of the bars in
     *   minutes
-    * @param {string} req[].beginDateTime - Date formatted in "YYYY-MM-DD"
-    * @param {string} req[].endDateTime - Date formatted in "YYYY-MM-DD"
+    * @param {string} req[].beginDateTime - Date formatted in "YYYYMMDDHHMMSS"
+    * @param {string} req[].endDateTime - Date formatted in "YYYYMMDDHHMMSS"
     * @param {int} req[].[timeout] - Timeout in milliseconds
     */
   /**
@@ -104,7 +104,7 @@ NodeActivetick.prototype = {
     *   "BarHistoryIntraday", "BarHistoryDaily", or "BarHistoryWeekly"
     * @param {int} req[].intradayMinuteCompression - Size of the bars in
     *   minutes
-    * @param {string} req[].beginDateTime - Date formatted in "YYYY-MM-DD"
+    * @param {string} req[].beginDateTime - Date formatted in "YYYYMMDDHHMMSS"
     * @param {int} req[].recordsWanted - Number of records wanted from the
     *   query
     * @param {string} req[].cursorType - Cursor type can be "CursorForward" or
@@ -211,6 +211,7 @@ NodeActivetick.prototype = {
     * @memberof NodeActivetick
     * @param {Object[]} req -
     * @param {string} req[].symbols - String of symbols, comma separated
+    *   symbol1,symbol2,...
     * @param {int} req[].[timeout] - Timeout in milliseconds
     */
   sendATMarketMoversDbRequest: function ( req ) {
@@ -248,8 +249,229 @@ NodeActivetick.prototype = {
     });
   },
 
-  connect: function (apiKey, serverAddr, port, username, password) {
-    return this.client.init( apiKey, serverAddr, port, username, password );
+  /**
+    * Send quote snapshot request.
+    * @memberof NodeActivetick
+    * @param {Object[]} req -
+    * @param {string} req[].symbols - String of symbols, comma separated
+    *   symbol1,symbol2,...
+    * @param {string} req[].fields - String of fields, comma separated
+    *   see import/include/Shared/ATServerAPIDefines.h for ATQuoteFieldType
+    * @param {int} req[].[timeout] - Timeout in milliseconds
+    */
+  sendATQuoteDbRequest: function ( req ) {
+    this.doAction( function () {
+      if ( !('timeout' in req) ) {
+        return this.client.sendATQuoteDbRequest( req.symbols, req.fields );
+      } else {
+        return this.client.sendATQuoteDbRequest( req.symbols, req.fields,
+                                                 req.timeout );
+      }
+    });
+  },
+
+  /**
+    * Send quote stream request.
+    * @memberof NodeActivetick
+    * @param {Object[]} req -
+    * @param {string} req[].symbols - String of symbols, comma separated
+    *   symbol1,symbol2,...
+    * @param {string} req[].requestType - can be either
+    *   "StreamRequestSubscribe", "StreamRequestUnsubscribe",
+    *   "StreamRequestSubscribeQuotesOnly",
+    *   "StreamRequestUnsubscribeQuotesOnly",
+    *   "StreamRequestSubscribeTradesOnly",
+    *   "StreamRequestUnsubscribeTradesOnly"
+    * @param {int} req[].[timeout] - Timeout in milliseconds
+    */
+  sendATQuoteStreamRequest: function ( req ) {
+    this.doAction( function () {
+      if ( !('timeout' in req) ) {
+        return this.client.sendATQuoteStreamRequest( req.symbols,
+                                                     req.requestType );
+      } else {
+        return this.client.sendATQuoteStreamRequest( req.symbols,
+                                                     req.requestType,
+                                                     req.timeout );
+      }
+    });
+  },
+
+  /**
+    * Send tick history data request.
+    * @name sendATTickHistoryDbRequest
+    * @memberof NodeActivetick
+    * @param {Object[]} req - 
+    * @param {string} req[].symbol - String of symbol
+    * @param {bool} req[].selectTrades -
+    * @param {bool} req[].selectQuotes -
+    * @param {string} req[].beginDateTime - Date formatted in "YYYYMMDDHHMMSS"
+    * @param {string} req[].endDateTime - Date formatted in "YYYYMMDDHHMMSS"
+    * @param {int} req[].[timeout] - Timeout in milliseconds
+    */
+  /**
+    * Send tick history data request.
+    * @name sendATTickHistoryDbRequest^2
+    * @memberof NodeActivetick
+    * @param {Object[]} req - 
+    * @param {string} req[].symbol - String of symbol
+    * @param {bool} req[].selectTrades -
+    * @param {bool} req[].selectQuotes -
+    * @param {int} req[].recordsWanted - Number of records wanted
+    * @param {int} req[].[timeout] - Timeout in milliseconds
+    */
+  /**
+    * Send tick history data request.
+    * @name sendATTickHistoryDbRequest^3
+    * @memberof NodeActivetick
+    * @param {Object[]} req - 
+    * @param {string} req[].symbol - String of symbol
+    * @param {bool} req[].selectTrades -
+    * @param {bool} req[].selectQuotes -
+    * @param {string} req[].beginDateTime - Date formatted in "YYYYMMDDHHMMSS"
+    * @param {int} req[].recordsWanted - Number of records wanted
+    * @param {string} req[].cursorType - Cursor type can be "CursorForward" or
+    *   "CursorBackward"
+    * @param {int} req[].[timeout] - Timeout in milliseconds
+    */
+  /**
+    * Send tick history data request.
+    * @name sendATTickHistoryDbRequest^4
+    * @memberof NodeActivetick
+    * @param {Object[]} req - 
+    * @param {string} req[].symbol - String of symbol
+    * @param {bool} req[].selectTrades -
+    * @param {bool} req[].selectQuotes -
+    * @param {int} req[].pagesWanted - Number of pages wanted
+    * @param {int} req[].offset- Page offset
+    * @param {string} req[].dbdate - Date formatted in "YYYYMMDDHHMMSS"
+    * @param {int} req[].[timeout] - Timeout in milliseconds
+    */
+  sendATTickHistoryDbRequest: function ( req ) {
+    this.doAction( function () {
+      if ( 'beginDateTime' in req && 'endDateTime' in req ) {
+        if ( !('timeout' in req) ) {
+          return this.client.sendATTickHistoryDbRequest( req.symbol,
+                                                         req.selectTrades,
+                                                         req.selectQuotes,
+                                                         req.beginDateTime,
+                                                         req.endDateTime );
+        } else {
+          return this.client.sendATTickHistoryDbRequest( req.symbol,
+                                                         req.selectTrades,
+                                                         req.selectQuotes,
+                                                         req.beginDateTime,
+                                                         req.endDateTime,
+                                                         req.timeout );
+        }
+      } else if ( 'recordsWanted' in req && !( 'beginDateTime' in req ) ) {
+        if ( !('timeout' in req) ) {
+          return this.client.sendATTickHistoryDbRequest( req.symbol,
+                                                         req.selectTrades,
+                                                         req.selectQuotes,
+                                                         req.recordsWanted );
+        } else {
+          return this.client.sendATTickHistoryDbRequest( req.symbol,
+                                                         req.selectTrades,
+                                                         req.selectQuotes,
+                                                         req.recordsWanted,
+                                                         req.timeout );
+        }
+      } else if ( 'recordsWanted' in req && 'beginDateTime' in req ) {
+        if ( !('timeout' in req) ) {
+          return this.client.sendATTickHistoryDbRequest( req.symbol,
+                                                         req.selectTrades,
+                                                         req.selectQuotes,
+                                                         req.beginDateTime,
+                                                         req.recordsWanted,
+                                                         req.cursorType );
+        } else {
+          return this.client.sendATTickHistoryDbRequest( req.symbol,
+                                                         req.selectTrades,
+                                                         req.selectQuotes,
+                                                         req.beginDateTime,
+                                                         req.recordsWanted,
+                                                         req.cursorType,
+                                                         req.timeout );
+        }
+      } else if ( 'pagesWanted' in req ) {
+        if ( !('timeout' in req) ) {
+          return this.client.sendATTickHistoryDbRequest( req.symbol,
+                                                         req.selectTrades,
+                                                         req.selectQuotes,
+                                                         req.pagesWanted,
+                                                         req.offset,
+                                                         req.dbdate );
+        } else {
+          return this.client.sendATTickHistoryDbRequest( req.symbol,
+                                                         req.selectTrades,
+                                                         req.selectQuotes,
+                                                         req.pagesWanted,
+                                                         req.offset,
+                                                         req.dbdate,
+                                                         req.timeout );
+        }
+      }
+    });
+  },
+
+  /**
+    * Send sector list request. The response will contain sector/industry pairs
+    *   for all defined sectors.
+    * @memberof NodeActivetick
+    * @param {Object[]} req - 
+    * @param {int} req[].[timeout] - Timeout in milliseconds
+    */
+  sendATSectorListRequest: function ( req ) {
+    this.doAction( function () {
+      if ( !('timeout' in req) ) {
+        return this.client.sendATSectorListRequest();
+      } else {
+        return this.client.sendATSectorListRequest( req.timeout );
+      }
+    });
+  },
+
+  /**
+    * Send constituent list request. The response will contain a list of
+    *   symbols for key.
+    * @memberof NodeActivetick
+    * @param {Object[]} req - 
+    * @param {string} req[].constituentListType - Either 
+    *   "ATConstituentListIndex", "ATConstituentListSector", or
+    *   "ATConstituentListOptionChain".
+    * @param {string} req[].key - Specifies the key for which to retrieve the
+    *   list. If constituentListType is sector, the key should contain
+    *   SectorName IndustryName with 0x10 character between the names, 
+    *   * for example: "Services" 0x10 "Restaurants". If listType is index,
+    *   then key should contain an index symbol, for example $DJI. For
+    *   options, the key should be the underlying symbol.
+    * @param {int} req[].[timeout] - Timeout in milliseconds
+    */
+  sendATConstituentListRequest: function ( req ) {
+    this.doAction( function () {
+      if ( !('timeout' in req) ) {
+        return this.client.sendATConstituentListRequest(
+                           req.constituentListType, req.key );
+      } else {
+        return this.client.sendATConstituentListRequest(
+                           req.constituentListType, req.key, req.timeout );
+      }
+    });
+  },
+
+  /**
+    * Connects to Activetick server.
+    * @memberof NodeActivetick
+    * @param {string} apiKey - API key supplied with Activetick subscription
+    * @param {string} serverAddr - Server address, e.g. 
+    *   activetick1.activetick.com
+    * @param {int} port - Port number, e.g. 5000
+    * @param {string} userid - Username
+    * @param {string} passwd - Password
+    */
+  connect: function (apiKey, serverAddr, port, userid, passwd) {
+    return this.client.sessionInit( apiKey, serverAddr, port, userid, passwd );
   },
 
   doAction: function (action) {
