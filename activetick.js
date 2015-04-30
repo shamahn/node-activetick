@@ -162,6 +162,92 @@ NodeActivetick.prototype = {
     });
   },
 
+  /**
+    * Sends login request with Activetick credentials
+    * @memberof NodeActivetick
+    * @param {Object[]} req -
+    * @param {string} req[].userid - Activetick user ID
+    * @param {string} req[].passwd - Activetick password
+    * @param {int} req[].[timeout] - Timeout in milliseconds
+    */
+  sendATLoginRequest: function ( req ) {
+    this.doAction( function () {
+      if ( !('timeout' in req) ) {
+        return this.client.sendATLoginRequest( req.userid, req.passwd );
+      } else {
+        return this.client.sendATLoginRequest( req.userid, req.passwd,
+                                               req.timeout );
+      }
+    });
+  },
+
+  /**
+    * Requests dates for market holidays
+    * @memberof NodeActivetick
+    * @param {Object[]} req -
+    * @param {int} req[].yearsGoingBack - Number of years going back
+    * @param {int} req[].yearsGoingForward - Number of years going forward
+    * @param {string} req[].countryType - Can be either "CountryInternational",
+    *   "CountryUnitedStates", or "CountryCanada"
+    * @param {int} req[].[timeout] - Timeout in milliseconds
+    */
+  sendATMarketHolidaysRequest: function ( req ) {
+    this.doAction( function () {
+      if ( !('timeout' in req) ) {
+        return this.client.sendATMarketHolidaysRequest( req.yearsGoingBack,
+                                                        req.yearsGoingForward,
+                                                        req.countryType );
+      } else {
+        return this.client.sendATMarketHolidaysRequest( req.yearsGoingBack,
+                                                        req.yearsGoingForward,
+                                                        req.countryType,
+                                                        req.timeout );
+      }
+    });
+  },
+
+  /**
+    * Send market movers snapshot request
+    * @memberof NodeActivetick
+    * @param {Object[]} req -
+    * @param {string} req[].symbols - String of symbols, comma separated
+    * @param {int} req[].[timeout] - Timeout in milliseconds
+    */
+  sendATMarketMoversDbRequest: function ( req ) {
+    this.doAction( function () {
+      if ( !('timeout' in req) ) {
+        return this.client.sendATMarketMoversDbRequest( req.symbols );
+      } else {
+        return this.client.sendATMarketMoversDbRequest( req.symbols,
+                                                        req.timeout );
+      }
+    });
+  },
+
+  /**
+    * Send market movers stream request.
+    * @memberof NodeActivetick
+    * @param {Object[]} req -
+    * @param {string} req[].symbol - Symbol
+    * @param {string} req[].requestType - can be either
+    *   "StreamRequestSubscribe", "StreamRequestUnsubscribe",
+    *   "StreamRequestSubscribeQuotesOnly",
+    *   "StreamRequestUnsubscribeQuotesOnly",
+    *   "StreamRequestSubscribeTradesOnly",
+    *   "StreamRequestUnsubscribeTradesOnly"
+    * @param {int} req[].[timeout] - Timeout in milliseconds
+    */
+  sendATMarketMoversStreamRequest: function ( req ) {
+    this.doAction( function () {
+      if ( !('timeout' in req) ) {
+        return this.client.sendATMarketMoversStreamRequest( req.symbols );
+      } else {
+        return this.client.sendATMarketMoversStreamRequest( req.symbols,
+                                                            req.timeout );
+      }
+    });
+  },
+
   connect: function (apiKey, serverAddr, port, username, password) {
     return this.client.init( apiKey, serverAddr, port, username, password );
   },
