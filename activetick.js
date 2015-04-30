@@ -74,8 +74,10 @@ NodeActivetick.prototype = {
     * @name sendATBarHistoryDbRequest
     * @param {Object[]} req -
     * @param {string} req[].symbol - Symbol name
-    * @param {string} req[].barHistoryType - History type can be either "BarHistoryIntraday", "BarHistoryDaily", or "BarHistoryWeekly"
-    * @param {int} req[].intradayMinuteCompression - Size of the bars in minutes
+    * @param {string} req[].barHistoryType - History type can be either
+    *   "BarHistoryIntraday", "BarHistoryDaily", or "BarHistoryWeekly"
+    * @param {int} req[].intradayMinuteCompression - Size of the bars in
+    *   minutes
     * @param {string} req[].beginDateTime - Date formatted in "YYYY-MM-DD"
     * @param {string} req[].endDateTime - Date formatted in "YYYY-MM-DD"
     * @param {int} req[].[timeout] - Timeout in milliseconds
@@ -85,9 +87,12 @@ NodeActivetick.prototype = {
     * @name sendATBarHistoryDbRequest^2
     * @param {Object[]} req -
     * @param {string} req[].symbol - Symbol name
-    * @param {string} req[].barHistoryType - History type can be either "BarHistoryIntraday", "BarHistoryDaily", or "BarHistoryWeekly"
-    * @param {int} req[].intradayMinuteCompression - Size of the bars in minutes
-    * @param {int} req[].recordsWanted - Number of records wanted from the query
+    * @param {string} req[].barHistoryType - History type can be either
+    *   "BarHistoryIntraday", "BarHistoryDaily", or "BarHistoryWeekly"
+    * @param {int} req[].intradayMinuteCompression - Size of the bars in
+    *   minutes
+    * @param {int} req[].recordsWanted - Number of records wanted from the
+    *   query
     * @param {int} req[].[timeout] - Timeout in milliseconds
     */
   /**
@@ -95,11 +100,15 @@ NodeActivetick.prototype = {
     * @name sendATBarHistoryDbRequest^3
     * @param {Object[]} req -
     * @param {string} req[].symbol - Symbol name
-    * @param {string} req[].barHistoryType - History type can be either "BarHistoryIntraday", "BarHistoryDaily", or "BarHistoryWeekly"
-    * @param {int} req[].intradayMinuteCompression - Size of the bars in minutes
+    * @param {string} req[].barHistoryType - History type can be either
+    *   "BarHistoryIntraday", "BarHistoryDaily", or "BarHistoryWeekly"
+    * @param {int} req[].intradayMinuteCompression - Size of the bars in
+    *   minutes
     * @param {string} req[].beginDateTime - Date formatted in "YYYY-MM-DD"
-    * @param {int} req[].recordsWanted - Number of records wanted from the query
-    * @param {string} req[].cursorType - Cursor type can be "CursorForward" or "CursorBackward"
+    * @param {int} req[].recordsWanted - Number of records wanted from the
+    *   query
+    * @param {string} req[].cursorType - Cursor type can be "CursorForward" or
+    *   "CursorBackward"
     * @param {int} req[].[timeout] - Timeout in milliseconds
     */
   sendATBarHistoryDbRequest: function ( req ) {

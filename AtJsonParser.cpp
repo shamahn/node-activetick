@@ -10,7 +10,7 @@ AtJsonParser::~AtJsonParser()
 
 Handle<Object> AtJsonParser::parse( const JSONNode &n ) {
     Isolate* isolate = Isolate::GetCurrent();
-    Handle<Object> retData = Object::New( isolate );
+    Handle<Object> ret = Object::New( isolate );
     JSONNode::const_iterator i = n.begin();
     while ( i != n.end() ) {
         std::string node_name = i->name();
@@ -50,28 +50,29 @@ Handle<Object> AtJsonParser::parse( const JSONNode &n ) {
              node_name == "AtMarketHolidays" ||
              node_name == "beginDateTime" ||
              node_name == "endDateTime"
-              ) {
-            retData->Set( String::NewFromUtf8( isolate, node_name.c_str() ), parse( *i ) );
+            ) {
+            ret->Set( String::NewFromUtf8( isolate, node_name.c_str() ),
+                      parse( *i ) );
         }
         else if ( filterAsString( node_name ) ) {
-            retData->Set( String::NewFromUtf8( isolate, node_name.c_str() ),
-                          String::NewFromUtf8( isolate, i->as_string().c_str() ) );
+            ret->Set( String::NewFromUtf8( isolate, node_name.c_str() ),
+                      String::NewFromUtf8( isolate, i->as_string().c_str() ) );
         }
         else if ( filterAsNumber( node_name ) ) {
-            retData->Set( String::NewFromUtf8( isolate, node_name.c_str() ),
-                          Number::New( isolate, i->as_float() ) );
+            ret->Set( String::NewFromUtf8( isolate, node_name.c_str() ),
+                      Number::New( isolate, i->as_float() ) );
         }
         else if ( filterAsInteger( node_name ) ) {
-            retData->Set( String::NewFromUtf8( isolate, node_name.c_str() ),
-                          Integer::New( isolate, i->as_int() ) );
+            ret->Set( String::NewFromUtf8( isolate, node_name.c_str() ),
+                      Integer::New( isolate, i->as_int() ) );
         }
         else if ( filterAsBoolean( node_name ) ) {
-            retData->Set( String::NewFromUtf8( isolate, node_name.c_str() ),
-                          Boolean::New( isolate, i->as_bool() ) );
+            ret->Set( String::NewFromUtf8( isolate, node_name.c_str() ),
+                      Boolean::New( isolate, i->as_bool() ) );
         }
         ++i;
     }
-    return retData;
+    return ret;
 }
 
 bool AtJsonParser::filterAsString( const std::string& node_name ) {
