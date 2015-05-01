@@ -1,5 +1,7 @@
 #include "AtJsonParser.h"
 #include "import/libjson/libjson.h"
+#include <vector>
+#include <iostream>
 
 AtJsonParser::AtJsonParser()
 {
@@ -11,13 +13,14 @@ AtJsonParser::~AtJsonParser()
 Handle<Object> AtJsonParser::parse( const JSONNode &n ) {
     Isolate* isolate = Isolate::GetCurrent();
     Handle<Object> ret = Object::New( isolate );
+
     JSONNode::const_iterator i = n.begin();
     while ( i != n.end() ) {
         std::string node_name = i->name();
         if ( node_name == "serverTime" ||
              node_name == "response" ||
              node_name == "data" ||
-             node_name == "records" ||
+             node_name == "tick" ||
              node_name == "ATBarHistory" ||
              node_name == "ATSymbol" ||
              node_name == "ATLoginResponse" ||
@@ -36,7 +39,6 @@ Handle<Object> AtJsonParser::parse( const JSONNode &n ) {
              node_name == "itemSymbol" ||
              node_name == "itemLastPrice" ||
              node_name == "ATQuoteDb" ||
-             node_name == "dataItems" ||
              node_name == "priceData" ||
              node_name == "dateTime" ||
              node_name == "ATQuoteStream" ||
@@ -49,7 +51,6 @@ Handle<Object> AtJsonParser::parse( const JSONNode &n ) {
              node_name == "marketMovers" ||
              node_name == "closePrice" ||
              node_name == "lastDateTime" ||
-             node_name == "AtMarketHolidays" ||
              node_name == "beginDateTime" ||
              node_name == "endDateTime"
             ) {
@@ -72,9 +73,23 @@ Handle<Object> AtJsonParser::parse( const JSONNode &n ) {
             ret->Set( String::NewFromUtf8( isolate, node_name.c_str() ),
                       Boolean::New( isolate, i->as_bool() ) );
         }
+        else if ( i->type() == JSON_ARRAY ) {
+            JSONNode::const_iterator j = i->begin();
+            std::vector< Handle<Object> > vec;
+            while ( j != i->end() ) {
+                vec.push_back( parse( *j ) );
+                ++j;
+            }
+            Handle<Array> arr = Array::New( isolate, vec.size() );
+            for ( size_t idx = 0; idx < vec.size(); idx++ ) {
+                arr->Set( idx, vec[idx] );
+            }
+            ret->Set( String::NewFromUtf8( isolate, node_name.c_str() ), arr );
+        }
         ++i;
     }
     return ret;
+
 }
 
 bool AtJsonParser::filterAsString( const std::string& node_name ) {
@@ -146,7 +161,8 @@ bool AtJsonParser::filterAsInteger( const std::string& node_name ) {
          node_name == "lastCondition" ||
          node_name == "bidSize" ||
          node_name == "askSize" ||
-         node_name == "status"
+         node_name == "status" ||
+         node_name == "permissionEntry"
        )
         return true;
     return false;
