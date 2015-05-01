@@ -43,6 +43,8 @@ Handle<Object> AtJsonParser::parse( const JSONNode &n ) {
              node_name == "lastPrice" ||
              node_name == "bidPrice" ||
              node_name == "askPrice" ||
+             node_name == "prevClose" ||
+             node_name == "afterMarketClose" ||
              node_name == "lastUpdateTime" ||
              node_name == "marketMovers" ||
              node_name == "closePrice" ||
@@ -88,6 +90,7 @@ bool AtJsonParser::filterAsString( const std::string& node_name ) {
          node_name == "byte" ||
          node_name == "string" ||
          node_name == "unicodeString" ||
+         node_name == "lastExchange" ||
          node_name == "bidExchange" ||
          node_name == "askExchange"
        )
@@ -140,6 +143,7 @@ bool AtJsonParser::filterAsInteger( const std::string& node_name ) {
          node_name == "milliseconds" ||
          node_name == "lastSize" ||
          node_name == "condition" ||
+         node_name == "lastCondition" ||
          node_name == "bidSize" ||
          node_name == "askSize" ||
          node_name == "status"

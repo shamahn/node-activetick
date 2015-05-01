@@ -20,7 +20,7 @@ NodeActivetick.prototype = {
     );
   },
   _processMessage: function (next) {
-    var message = this.client.popMsg();
+    var message = this.client.getMsg();
     if (message.messageId in this.handlers) {
       var handler = this.handlers[message.messageId];
       handler(message);
@@ -113,7 +113,7 @@ NodeActivetick.prototype = {
     */
   sendATBarHistoryDbRequest: function ( req ) {
     this.doAction( function () {
-      if ( 'beginDateTime' in req && 'endDateTime' req ) {
+      if ( 'beginDateTime' in req && 'endDateTime' in req ) {
         if ( !('timeout' in req) ) {
           return this.client.sendATBarHistoryRequest( req.symbol,
                                                req.barHistoryType,

@@ -97,6 +97,90 @@ JSONNode Streamer::jsonifyAtQuoteStreamQuoteUpdate( LPATQUOTESTREAM_QUOTE_UPDATE
     return n;
 }
 
+/*virtual*/ void Streamer::OnATStreamRefreshUpdate( LPATQUOTESTREAM_REFRESH_UPDATE pUpdate ) {
+    JSONNode n( JSON_NODE );
+    n.push_back( JSONNode( "messageId", "ATStreamRefreshUpdate" ) );
+
+    JSONNode data( JSON_NODE );
+    data.set_name( "data" );
+    data.push_back( jsonifyAtStreamRefreshUpdate( pUpdate ) );
+    n.push_back( data );
+
+    m_pInboundMsgs->push( n );
+}
+
+JSONNode Streamer::jsonifyAtStreamRefreshUpdate( LPATQUOTESTREAM_REFRESH_UPDATE pUpdate ) {
+    JSONNode n( JSON_NODE );
+    n.push_back( m_jsonifier.jsonifyAtSymbol( &pUpdate->symbol ) );
+    n.push_back( JSONNode( "lastCondition", pUpdate->lastCondition ) );
+    n.push_back( JSONNode( "quoteCondition", pUpdate->quoteCondition ) );
+
+    JSONNode open( JSON_NODE );
+    open.set_name( "open" );
+    open.push_back( JSONNode( "precision", pUpdate->openPrice.precision ) );
+    open.push_back( JSONNode( "price", pUpdate->openPrice.price ) );
+    n.push_back( open );
+
+    JSONNode last( JSON_NODE );
+    last.set_name( "lastPrice" );
+    last.push_back( JSONNode( "precision", pUpdate->lastPrice.precision ) );
+    last.push_back( JSONNode( "price", pUpdate->lastPrice.price ) );
+    n.push_back( last );
+
+    JSONNode high( JSON_NODE );
+    high.set_name( "high" );
+    high.push_back( JSONNode( "precision", pUpdate->highPrice.precision ) );
+    high.push_back( JSONNode( "price", pUpdate->highPrice.price ) );
+    n.push_back( high );
+
+    JSONNode low( JSON_NODE );
+    low.set_name( "low" );
+    low.push_back( JSONNode( "precision", pUpdate->lowPrice.precision ) );
+    low.push_back( JSONNode( "price", pUpdate->lowPrice.price ) );
+    n.push_back( low );
+
+    JSONNode close( JSON_NODE );
+    close.set_name( "close" );
+    close.push_back( JSONNode( "precision", pUpdate->closePrice.precision ) );
+    close.push_back( JSONNode( "price", pUpdate->closePrice.price ) );
+    n.push_back( close );
+
+    JSONNode prevClose( JSON_NODE );
+    prevClose.set_name( "prevClose" );
+    prevClose.push_back( JSONNode( "precision", pUpdate->prevClosePrice.precision ) );
+    prevClose.push_back( JSONNode( "price", pUpdate->prevClosePrice.price ) );
+    n.push_back( prevClose );
+
+    JSONNode afterMarketClose( JSON_NODE );
+    afterMarketClose.set_name( "afterMarketClose" );
+    afterMarketClose.push_back( JSONNode( "precision", pUpdate->afterMarketClosePrice.precision ) );
+    afterMarketClose.push_back( JSONNode( "price", pUpdate->afterMarketClosePrice.price ) );
+    n.push_back( afterMarketClose );
+
+    JSONNode bid( JSON_NODE );
+    bid.set_name( "bidPrice" );
+    bid.push_back( JSONNode( "precision", pUpdate->bidPrice.precision ) );
+    bid.push_back( JSONNode( "price", pUpdate->bidPrice.price ) );
+    n.push_back( bid );
+
+    JSONNode ask( JSON_NODE );
+    ask.set_name( "askPrice" );
+    ask.push_back( JSONNode( "precision", pUpdate->askPrice.precision ) );
+    ask.push_back( JSONNode( "price", pUpdate->askPrice.price ) );
+    n.push_back( ask );
+
+    n.push_back( JSONNode( "lastExchange", pUpdate->lastExchange ) );
+    n.push_back( JSONNode( "bidExchange", pUpdate->bidExchange ) );
+    n.push_back( JSONNode( "askExchange", pUpdate->askExchange ) );
+
+    n.push_back( JSONNode( "bidSize", pUpdate->bidSize ) );
+    n.push_back( JSONNode( "askSize", pUpdate->askSize ) );
+    n.push_back( JSONNode( "lastSize", pUpdate->lastSize ) );
+    n.push_back( JSONNode( "volume", pUpdate->volume ) );
+
+    return n;
+}
+
 /*virtual*/ void Streamer::OnATStreamTopMarketMoversUpdate(
                                     LPATMARKET_MOVERS_STREAM_UPDATE pUpdate ) {
     JSONNode n( JSON_NODE );
@@ -148,3 +232,4 @@ JSONNode Streamer::jsonifyAtMarketMoversStreamUpdate( LPATMARKET_MOVERS_STREAM_U
 
     return n;
 }
+
