@@ -1,5 +1,7 @@
 #include "Jsonifier.h"
+#include <string.h>
 #include "import/libjson/libjson.h"
+#include "import/example/Helper.h"
 
 Jsonifier::Jsonifier( void ) {
 }
@@ -25,7 +27,11 @@ Jsonifier::~Jsonifier( void ) {
 /*static*/ JSONNode Jsonifier::jsonifyAtSymbol( LPATSYMBOL pSymbol ) {
     JSONNode s( JSON_NODE );
     s.set_name( "ATSymbol" );
-    s.push_back( JSONNode( "symbolStr", pSymbol->symbol ) );
+
+    char symbolStr[512] = {0};
+    std::string str = Helper::ConvertString(pSymbol->symbol, Helper::StringLength(pSymbol->symbol));
+    strncpy(symbolStr, str.c_str(), sizeof(symbolStr));
+    s.push_back( JSONNode( "symbolStr", symbolStr ) );
     s.push_back( JSONNode( "symbolType", pSymbol->symbolType ) );
     s.push_back( JSONNode( "exchangeType", pSymbol->exchangeType ) );
     s.push_back( JSONNode( "countryType", pSymbol->countryType ) );
