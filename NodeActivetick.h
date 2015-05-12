@@ -31,18 +31,27 @@ private:
     static void GetSessionHandle( const FunctionCallbackInfo<Value> &args );
 
     // -- requestor --
-    static void CloseAllATRequests ( const FunctionCallbackInfo<Value> &args );
-    static void CloseATRequest ( const FunctionCallbackInfo<Value> &args );
-    static void SendATBarHistoryDbRequest ( const FunctionCallbackInfo<Value> &args );
-    static void SendATLoginRequest ( const FunctionCallbackInfo<Value> &args );
-    static void SendATMarketHolidaysRequest ( const FunctionCallbackInfo<Value> &args );
-    static void SendATMarketMoversDbRequest ( const FunctionCallbackInfo<Value> &args );
-    static void SendATMarketMoversStreamRequest ( const FunctionCallbackInfo<Value> &args );
-    static void SendATQuoteDbRequest ( const FunctionCallbackInfo<Value> &args );
-    static void SendATQuoteStreamRequest ( const FunctionCallbackInfo<Value> &args );
-    static void SendATTickHistoryDbRequest ( const FunctionCallbackInfo<Value> &args );
-    static void SendATSectorListRequest ( const FunctionCallbackInfo<Value> &args );
-    static void SendATConstituentListRequest ( const FunctionCallbackInfo<Value> &args );
+    static void CloseAllATRequests( const FunctionCallbackInfo<Value> &args );
+    static void CloseATRequest( const FunctionCallbackInfo<Value> &args );
+    static void SendATBarHistoryDbRequest(
+            const FunctionCallbackInfo<Value> &args );
+    static void SendATLoginRequest( const FunctionCallbackInfo<Value> &args );
+    static void SendATMarketHolidaysRequest(
+            const FunctionCallbackInfo<Value> &args );
+    static void SendATMarketMoversDbRequest(
+            const FunctionCallbackInfo<Value> &args );
+    static void SendATMarketMoversStreamRequest(
+            const FunctionCallbackInfo<Value> &args );
+    static void SendATQuoteDbRequest(
+            const FunctionCallbackInfo<Value> &args );
+    static void SendATQuoteStreamRequest(
+            const FunctionCallbackInfo<Value> &args );
+    static void SendATTickHistoryDbRequest(
+            const FunctionCallbackInfo<Value> &args );
+    static void SendATSectorListRequest(
+            const FunctionCallbackInfo<Value> &args );
+    static void SendATConstituentListRequest(
+            const FunctionCallbackInfo<Value> &args );
 
     // -- streamer --
 
