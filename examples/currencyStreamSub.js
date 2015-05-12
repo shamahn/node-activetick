@@ -3,6 +3,9 @@ var messageIds = addon.messageIds;
 
 var api = new addon.NodeActivetick();
 
+Number.prototype.round = function(places) {
+  return +(Math.round(this + "e+" + places)  + "e-" + places);
+}
 
 var activetickCb = function (data) {
   console.log(JSON.stringify(data,null,2));
@@ -21,6 +24,24 @@ api.handlers["ATLoginResponse"] = function ( data ) {
 
   console.log(reqNum);
   
+};
+
+api.handlers["ATStreamQuoteUpdate"] = function ( msg ) {
+  var atTime = msg.data.time;
+  console.log(atTime.year + "-" + atTime.month + "-" + atTime.day + " " +
+              atTime.hour + ":" + atTime.minute + ":" + atTime.second + ":" +
+              atTime.milliseconds + " [QUOTE] " +
+              msg.data.ATSymbol.symbolStr + " " +
+              msg.data.bidPrice.price.round(msg.data.bidPrice.precision) + " " +
+              msg.data.askPrice.price.round(msg.data.askPrice.precision) );
+};
+api.handlers["ATStreamTradeUpdate"] = function ( msg ) {
+  var atTime = msg.data.time;
+  console.log(atTime.year + "-" + atTime.month + "-" + atTime.day + " " +
+              atTime.hour + ":" + atTime.minute + ":" + atTime.second + ":" +
+              atTime.milliseconds + " [TRADE] " +
+              msg.data.ATSymbol.symbolStr + " " +
+              msg.data.lastPrice.price.round(msg.data.lastPrice.precision) );
 };
 
 var connected = api.connect( process.env.ATAPIKEY,
