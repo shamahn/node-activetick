@@ -280,7 +280,7 @@ void NodeActivetick::SendATMarketMoversStreamRequest(
     if ( args.Length() == 3 && args[2]->IsUint32() )
         timeout = args[2]->Uint32Value();
 
-    uint64_t request = obj->m_requestor.SendATMarketMoversStreamRequest(
+    uint64_t request = obj->m_streamer.SendATMarketMoversStreamRequest(
                             atSymbol, requestType, timeout );
 
     args.GetReturnValue().Set( Integer::New( isolate, request ) );
@@ -341,7 +341,7 @@ void NodeActivetick::SendATQuoteStreamRequest(
     if ( args.Length() == 3 && args[2]->IsUint32() )
         timeout = args[2]->Uint32Value();
 
-    uint64_t request = obj->m_requestor.SendATQuoteStreamRequest(
+    uint64_t request = obj->m_streamer.SendATQuoteStreamRequest(
                             atSymbols.data(), (uint16_t)atSymbols.size(),
                             requestType, timeout);
 

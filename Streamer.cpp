@@ -26,10 +26,7 @@ Streamer::~Streamer(void)
     JSONNode n( JSON_NODE );
     n.push_back( JSONNode( "messageId", "ATStreamTradeUpdate" ) );
 
-    JSONNode data( JSON_NODE );
-    data.set_name( "data" );
-    data.push_back( jsonifyAtQuoteStreamTradeUpdate( pUpdate ) );
-    n.push_back( data );
+    n.push_back( jsonifyAtQuoteStreamTradeUpdate( pUpdate ) );
 
     m_pInboundMsgs->push( n );
 }
@@ -37,13 +34,14 @@ Streamer::~Streamer(void)
 JSONNode Streamer::jsonifyAtQuoteStreamTradeUpdate( 
                                     LPATQUOTESTREAM_TRADE_UPDATE pUpdate ) {
     JSONNode n( JSON_NODE );
+    n.set_name( "data" );
     n.push_back( m_jsonifier.jsonifyAtSymbol( &pUpdate->symbol ) );
     n.push_back( JSONNode( "flags", pUpdate->flags ) );
 
 // TODO: Not sure about this
     n.push_back( JSONNode( "condition", pUpdate->condition ) );
 
-    n.push_back( JSONNode( "lastExchange", pUpdate->lastExchange ) );
+    n.push_back( JSONNode( "lastExchange", m_jsonifier.getExchangeType(pUpdate->lastExchange) ) );
 
     JSONNode last( JSON_NODE );
     last.set_name( "lastPrice" );
@@ -62,20 +60,18 @@ JSONNode Streamer::jsonifyAtQuoteStreamTradeUpdate(
     JSONNode n( JSON_NODE );
     n.push_back( JSONNode( "messageId", "ATStreamQuoteUpdate" ) );
 
-    JSONNode data( JSON_NODE );
-    data.set_name( "data" );
-    data.push_back( jsonifyAtQuoteStreamQuoteUpdate( pUpdate ) );
-    n.push_back( data );
+    n.push_back( jsonifyAtQuoteStreamQuoteUpdate( pUpdate ) );
 
     m_pInboundMsgs->push( n );
 }
 
 JSONNode Streamer::jsonifyAtQuoteStreamQuoteUpdate( LPATQUOTESTREAM_QUOTE_UPDATE pUpdate ) {
     JSONNode n( JSON_NODE );
+    n.set_name( "data" );
     n.push_back( m_jsonifier.jsonifyAtSymbol( &pUpdate->symbol ) );
     n.push_back( JSONNode( "condition", pUpdate->condition ) );
-    n.push_back( JSONNode( "bidExchange", pUpdate->bidExchange ) );
-    n.push_back( JSONNode( "askExchange", pUpdate->askExchange ) );
+    n.push_back( JSONNode( "bidExchange", m_jsonifier.getExchangeType(pUpdate->bidExchange) ) );
+    n.push_back( JSONNode( "askExchange", m_jsonifier.getExchangeType(pUpdate->askExchange) ) );
 
     JSONNode bid( JSON_NODE );
     bid.set_name( "bidPrice" );
@@ -169,9 +165,9 @@ JSONNode Streamer::jsonifyAtStreamRefreshUpdate( LPATQUOTESTREAM_REFRESH_UPDATE 
     ask.push_back( JSONNode( "price", pUpdate->askPrice.price ) );
     n.push_back( ask );
 
-    n.push_back( JSONNode( "lastExchange", pUpdate->lastExchange ) );
-    n.push_back( JSONNode( "bidExchange", pUpdate->bidExchange ) );
-    n.push_back( JSONNode( "askExchange", pUpdate->askExchange ) );
+    n.push_back( JSONNode( "lastExchange", m_jsonifier.getExchangeType(pUpdate->lastExchange) ) );
+    n.push_back( JSONNode( "bidExchange", m_jsonifier.getExchangeType(pUpdate->bidExchange) ) );
+    n.push_back( JSONNode( "askExchange", m_jsonifier.getExchangeType(pUpdate->askExchange) ) );
 
     n.push_back( JSONNode( "bidSize", pUpdate->bidSize ) );
     n.push_back( JSONNode( "askSize", pUpdate->askSize ) );

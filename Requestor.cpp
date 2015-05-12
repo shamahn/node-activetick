@@ -159,9 +159,9 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
         symbol.set_name( "data" );
         symbol.push_back( JSONNode( "symbolStr", Helper::ConvertString(
                 pSymbols[i].symbol, _countof(pSymbols[i].symbol)).c_str() ) );
-        symbol.push_back( JSONNode( "symbolType", pSymbols[i].symbolType ) );
-        symbol.push_back( JSONNode( "exchangeType", pSymbols[i].exchangeType ));
-        symbol.push_back( JSONNode( "countryType", pSymbols[i].countryType ) );
+        symbol.push_back( JSONNode( "symbolType", m_jsonifier.getSymbolType(pSymbols[i].symbolType) ) );
+        symbol.push_back( JSONNode( "exchangeType", m_jsonifier.getExchangeType(pSymbols[i].exchangeType) ));
+        symbol.push_back( JSONNode( "countryType", m_jsonifier.getCountryType(pSymbols[i].countryType) ) );
 
         list.push_back( symbol );
     }
@@ -245,7 +245,7 @@ JSONNode Requestor::jsonifyAtTickHistory( LPATTICKHISTORY_RESPONSE pResponse ) {
                                     parser.GetTradeLastPrice().price ) );
                 tick.push_back( last );
                 tick.push_back( JSONNode( "tradeLastSize", parser.GetTradeLastSize() ) );
-                tick.push_back( JSONNode( "tradeLastExchange", parser.GetTradeLastExchange() ) );
+                tick.push_back( JSONNode( "tradeLastExchange", m_jsonifier.getExchangeType[parser.GetTradeLastExchange()] ) );
                 tick.push_back( JSONNode( "tradeCondition", parser.GetTradeCondition(0) ) );
                 }
                 break;
@@ -267,8 +267,8 @@ JSONNode Requestor::jsonifyAtTickHistory( LPATTICKHISTORY_RESPONSE pResponse ) {
                 tick.push_back( ask );
                 tick.push_back( JSONNode( "quoteBidSize", parser.GetQuoteBidSize() ) );
                 tick.push_back( JSONNode( "quoteAskSize", parser.GetQuoteAskSize() ) );
-                tick.push_back( JSONNode( "quoteBidExchange", parser.GetQuoteBidExchange() ) );
-                tick.push_back( JSONNode( "quoteAskExchange", parser.GetQuoteAskExchange() ) );
+                tick.push_back( JSONNode( "quoteBidExchange", m_jsonifier.getExchangeType(parser.GetQuoteBidExchange()) ) );
+                tick.push_back( JSONNode( "quoteAskExchange", m_jsonifier.getExchangeType(parser.GetQuoteAskExchange()) ) );
                 tick.push_back( JSONNode( "quoteCondition", parser.GetQuoteCondition() ) );
                 }
                 break;
@@ -296,7 +296,7 @@ JSONNode Requestor::jsonifyAtSymbolStatus( ATSymbolStatus status ) {
     default: break;
     }
     JSONNode n( JSON_NODE );
-    n.set_name( "status" );
+    n.set_name( "data" );
     n.push_back( JSONNode( "name", "ATSymbolStatus" ) );
     n.push_back( JSONNode( "enum", status ) );
     n.push_back( JSONNode( "type", strStatusType ) );
@@ -656,9 +656,9 @@ JSONNode Requestor::jsonifyAtMarketHolidays( LPATMARKET_HOLIDAYSLIST_ITEM pItems
     for(uint32_t i = 0; i < itemsCount; ++i) {
         JSONNode holiday( JSON_NODE );
         holiday.set_name( "data" );
-        holiday.push_back( JSONNode( "symbolType", pItems[i].symbolType ) );
-        holiday.push_back( JSONNode( "exchangeType", pItems[i].exchangeType ));
-        holiday.push_back( JSONNode( "countryType", pItems[i].countryType ) );
+        holiday.push_back( JSONNode( "symbolType", m_jsonifier.getSymbolType(pItems[i].symbolType) ) );
+        holiday.push_back( JSONNode( "exchangeType", m_jsonifier.getExchangeType(pItems[i].exchangeType) ));
+        holiday.push_back( JSONNode( "countryType", m_jsonifier.getCountryType(pItems[i].countryType) ) );
         holiday.push_back( this->m_jsonifier.jsonifyAtTime( "beginDateTime", &pItems[i].beginDateTime ) );
         holiday.push_back( this->m_jsonifier.jsonifyAtTime( "endDateTime", &pItems[i].endDateTime ) );
 

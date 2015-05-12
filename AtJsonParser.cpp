@@ -99,6 +99,9 @@ bool AtJsonParser::filterAsString( const std::string& node_name ) {
          node_name == "sector" ||
          node_name == "industry" ||
          node_name == "symbolStr" ||
+         node_name == "symbolType" ||
+         node_name == "exchangeType" ||
+         node_name == "countryType" ||
          node_name == "tradeLastExchange" ||
          node_name == "quoteBidExchange" ||
          node_name == "quoteAskExchange" ||
@@ -132,9 +135,6 @@ bool AtJsonParser::filterAsInteger( const std::string& node_name ) {
          node_name == "count" ||
          node_name == "precision" ||
          node_name == "volume" ||
-         node_name == "symbolType" ||
-         node_name == "exchangeType" ||
-         node_name == "countryType" ||
          node_name == "nextOffset" ||
          node_name == "tradeLastSize" ||
          node_name == "tradeCondition" ||
