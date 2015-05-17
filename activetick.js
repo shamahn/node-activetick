@@ -3,6 +3,10 @@ var async = require('async');
 var messageIds = require('./messageIds');
 var RateLimiter = require("limiter").RateLimiter;
 
+/**
+  * Constructor.
+  * @constructor
+  */
 function NodeActivetick() {
   this.client = new addon.NodeActivetick();
   this.limiter = new RateLimiter(1000,'second');
@@ -71,7 +75,7 @@ NodeActivetick.prototype = {
     * You must pass an object of one of three types. 'timeout' parameter within
     * the object req is optional.
     * @memberof NodeActivetick
-    * @name sendATBarHistoryDbRequest
+    * @function sendATBarHistoryDbRequest
     * @param {Object[]} req -
     * @param {string} req[].symbol - Symbol name
     * @param {string} req[].barHistoryType - History type can be either
@@ -80,11 +84,11 @@ NodeActivetick.prototype = {
     *   minutes
     * @param {string} req[].beginDateTime - Date formatted in "YYYYMMDDHHMMSS"
     * @param {string} req[].endDateTime - Date formatted in "YYYYMMDDHHMMSS"
-    * @param {int} req[].[timeout] - Timeout in milliseconds
+    * @param {int} [req[].timeout] - Timeout in milliseconds
     */
   /**
     * @memberof NodeActivetick
-    * @name sendATBarHistoryDbRequest^2
+    * @function sendATBarHistoryDbRequest
     * @param {Object[]} req -
     * @param {string} req[].symbol - Symbol name
     * @param {string} req[].barHistoryType - History type can be either
@@ -93,11 +97,11 @@ NodeActivetick.prototype = {
     *   minutes
     * @param {int} req[].recordsWanted - Number of records wanted from the
     *   query
-    * @param {int} req[].[timeout] - Timeout in milliseconds
+    * @param {int} [req[].timeout] - Timeout in milliseconds
     */
   /**
     * @memberof NodeActivetick
-    * @name sendATBarHistoryDbRequest^3
+    * @function sendATBarHistoryDbRequest
     * @param {Object[]} req -
     * @param {string} req[].symbol - Symbol name
     * @param {string} req[].barHistoryType - History type can be either
@@ -109,7 +113,7 @@ NodeActivetick.prototype = {
     *   query
     * @param {string} req[].cursorType - Cursor type can be "CursorForward" or
     *   "CursorBackward"
-    * @param {int} req[].[timeout] - Timeout in milliseconds
+    * @param {int} [req[].timeout] - Timeout in milliseconds
     */
   sendATBarHistoryDbRequest: function ( req ) {
     this.doAction( function () {
@@ -168,7 +172,7 @@ NodeActivetick.prototype = {
     * @param {Object[]} req -
     * @param {string} req[].userid - Activetick user ID
     * @param {string} req[].passwd - Activetick password
-    * @param {int} req[].[timeout] - Timeout in milliseconds
+    * @param {int} [req[].timeout] - Timeout in milliseconds
     */
   sendATLoginRequest: function ( req ) {
     this.doAction( function () {
@@ -189,7 +193,7 @@ NodeActivetick.prototype = {
     * @param {int} req[].yearsGoingForward - Number of years going forward
     * @param {string} req[].countryType - Can be either "CountryInternational",
     *   "CountryUnitedStates", or "CountryCanada"
-    * @param {int} req[].[timeout] - Timeout in milliseconds
+    * @param {int} [req[].timeout] - Timeout in milliseconds
     */
   sendATMarketHolidaysRequest: function ( req ) {
     this.doAction( function () {
@@ -212,7 +216,7 @@ NodeActivetick.prototype = {
     * @param {Object[]} req -
     * @param {string} req[].symbols - String of symbols, comma separated
     *   symbol1,symbol2,...
-    * @param {int} req[].[timeout] - Timeout in milliseconds
+    * @param {int} [req[].timeout] - Timeout in milliseconds
     */
   sendATMarketMoversDbRequest: function ( req ) {
     this.doAction( function () {
@@ -236,7 +240,7 @@ NodeActivetick.prototype = {
     *   "StreamRequestUnsubscribeQuotesOnly",
     *   "StreamRequestSubscribeTradesOnly",
     *   "StreamRequestUnsubscribeTradesOnly"
-    * @param {int} req[].[timeout] - Timeout in milliseconds
+    * @param {int} [req[].timeout] - Timeout in milliseconds
     */
   sendATMarketMoversStreamRequest: function ( req ) {
     this.doAction( function () {
@@ -257,7 +261,7 @@ NodeActivetick.prototype = {
     *   symbol1,symbol2,...
     * @param {string} req[].fields - String of fields, comma separated
     *   see import/include/Shared/ATServerAPIDefines.h for ATQuoteFieldType
-    * @param {int} req[].[timeout] - Timeout in milliseconds
+    * @param {int} [req[].timeout] - Timeout in milliseconds
     */
   sendATQuoteDbRequest: function ( req ) {
     this.doAction( function () {
@@ -282,7 +286,7 @@ NodeActivetick.prototype = {
     *   "StreamRequestUnsubscribeQuotesOnly",
     *   "StreamRequestSubscribeTradesOnly",
     *   "StreamRequestUnsubscribeTradesOnly"
-    * @param {int} req[].[timeout] - Timeout in milliseconds
+    * @param {int} [req[].timeout] - Timeout in milliseconds
     */
   sendATQuoteStreamRequest: function ( req ) {
     this.doAction( function () {
@@ -298,32 +302,34 @@ NodeActivetick.prototype = {
   },
 
   /**
-    * Send tick history data request.
-    * @name sendATTickHistoryDbRequest
+    * Send tick history data request. Takes in begining and end dates. Will
+    *  output only a week's worth, truncated at the start of the weekend.
     * @memberof NodeActivetick
+    * @function sendATTickHistoryDbRequest
     * @param {Object[]} req - 
     * @param {string} req[].symbol - String of symbol
     * @param {bool} req[].selectTrades -
     * @param {bool} req[].selectQuotes -
     * @param {string} req[].beginDateTime - Date formatted in "YYYYMMDDHHMMSS"
     * @param {string} req[].endDateTime - Date formatted in "YYYYMMDDHHMMSS"
-    * @param {int} req[].[timeout] - Timeout in milliseconds
+    * @param {int} [req[].timeout] - Timeout in milliseconds
     */
   /**
-    * Send tick history data request.
-    * @name sendATTickHistoryDbRequest^2
+    * Send tick history data request. Takes in number of records wanted.
     * @memberof NodeActivetick
+    * @function sendATTickHistoryDbRequest
     * @param {Object[]} req - 
     * @param {string} req[].symbol - String of symbol
     * @param {bool} req[].selectTrades -
     * @param {bool} req[].selectQuotes -
     * @param {int} req[].recordsWanted - Number of records wanted
-    * @param {int} req[].[timeout] - Timeout in milliseconds
+    * @param {int} [req[].timeout] - Timeout in milliseconds
     */
   /**
-    * Send tick history data request.
-    * @name sendATTickHistoryDbRequest^3
+    * Send tick history data request. Takes in begining date, number of
+    *  records and direction of records.
     * @memberof NodeActivetick
+    * @function sendATTickHistoryDbRequest
     * @param {Object[]} req - 
     * @param {string} req[].symbol - String of symbol
     * @param {bool} req[].selectTrades -
@@ -332,12 +338,12 @@ NodeActivetick.prototype = {
     * @param {int} req[].recordsWanted - Number of records wanted
     * @param {string} req[].cursorType - Cursor type can be "CursorForward" or
     *   "CursorBackward"
-    * @param {int} req[].[timeout] - Timeout in milliseconds
+    * @param {int} [req[].timeout] - Timeout in milliseconds
     */
   /**
-    * Send tick history data request.
-    * @name sendATTickHistoryDbRequest^4
+    * Send tick history data request. Takes in number of pages wanted.
     * @memberof NodeActivetick
+    * @function sendATTickHistoryDbRequest
     * @param {Object[]} req - 
     * @param {string} req[].symbol - String of symbol
     * @param {bool} req[].selectTrades -
@@ -345,7 +351,7 @@ NodeActivetick.prototype = {
     * @param {int} req[].pagesWanted - Number of pages wanted
     * @param {int} req[].offset- Page offset
     * @param {string} req[].dbdate - Date formatted in "YYYYMMDDHHMMSS"
-    * @param {int} req[].[timeout] - Timeout in milliseconds
+    * @param {int} [req[].timeout] - Timeout in milliseconds
     */
   sendATTickHistoryDbRequest: function ( req ) {
     this.doAction( function () {
@@ -420,7 +426,7 @@ NodeActivetick.prototype = {
     *   for all defined sectors.
     * @memberof NodeActivetick
     * @param {Object[]} req - 
-    * @param {int} req[].[timeout] - Timeout in milliseconds
+    * @param {int} [req[].timeout] - Timeout in milliseconds
     */
   sendATSectorListRequest: function ( req ) {
     this.doAction( function () {
@@ -446,7 +452,7 @@ NodeActivetick.prototype = {
     *   * for example: "Services" 0x10 "Restaurants". If listType is index,
     *   then key should contain an index symbol, for example $DJI. For
     *   options, the key should be the underlying symbol.
-    * @param {int} req[].[timeout] - Timeout in milliseconds
+    * @param {int} [req[].timeout] - Timeout in milliseconds
     */
   sendATConstituentListRequest: function ( req ) {
     this.doAction( function () {
