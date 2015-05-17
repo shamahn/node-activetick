@@ -140,6 +140,7 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
                 pRecords[i].industry, ATIndustryNameMaxLength).c_str() ) );
         list.push_back(item);
     }
+    n.push_back( list );
     m_pInboundMsgs->push( n );
 }
 
@@ -153,10 +154,10 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
     n.push_back( JSONNode( "count", symbolsCount ) );
     
     JSONNode list( JSON_ARRAY );
-    list.set_name( "list" );
+    list.set_name( "dataItems" );
     for(uint32_t i = 0; i < symbolsCount; ++i) {
         JSONNode symbol( JSON_NODE );
-        symbol.set_name( "data" );
+        symbol.set_name( "ATSymbol" );
         symbol.push_back( JSONNode( "symbolStr", Helper::ConvertString(
                 pSymbols[i].symbol, _countof(pSymbols[i].symbol)).c_str() ) );
         symbol.push_back( JSONNode( "symbolType", m_jsonifier.getSymbolType(pSymbols[i].symbolType) ) );
@@ -165,6 +166,7 @@ JSONNode Requestor::jsonifyAtBarHistory( LPATBARHISTORY_RESPONSE pResponse ) {
 
         list.push_back( symbol );
     }
+    n.push_back( list );
     m_pInboundMsgs->push( n );
 }
 
@@ -505,8 +507,8 @@ JSONNode Requestor::jsonifyAtQuoteDb( LPATQUOTEDB_RESPONSE pResponse,
                         break;
                     default: break;
                     }
-                    item.push_back( JSONNode( "dataItemQuoteFieldType", parser.GetDataItemQuoteFieldType() ) );
-                    item.push_back( JSONNode( "dataItemFieldStatus", parser.GetDataItemFieldStatus() ) );
+                    item.push_back( JSONNode( "dataItemQuoteFieldType", m_jsonifier.getQuoteFieldType( parser.GetDataItemQuoteFieldType() ) ) );
+                    item.push_back( JSONNode( "dataItemFieldStatus", m_jsonifier.getFieldStatus( parser.GetDataItemFieldStatus() ) ) );
                     item.push_back( dContent );
                     items.push_back( item );
                     if(parser.MoveToNextDataItem() == false)

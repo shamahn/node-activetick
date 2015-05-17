@@ -110,7 +110,9 @@ bool AtJsonParser::filterAsString( const std::string& node_name ) {
          node_name == "unicodeString" ||
          node_name == "lastExchange" ||
          node_name == "bidExchange" ||
-         node_name == "askExchange"
+         node_name == "askExchange" ||
+         node_name == "dataItemQuoteFieldType" ||
+         node_name == "dataItemFieldStatus"
        )
         return true;
     return false;
@@ -146,8 +148,6 @@ bool AtJsonParser::filterAsInteger( const std::string& node_name ) {
          node_name == "uint64" ||
          node_name == "int32" ||
          node_name == "int64" ||
-         node_name == "dataItemQuoteFieldType" ||
-         node_name == "dataItemFieldStatus" ||
          node_name == "year" ||
          node_name == "month" ||
          node_name == "dayOfWeek" ||

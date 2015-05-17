@@ -23,19 +23,16 @@ var lastTrade = {};
 api.handlers["ATLoginResponse"] = function ( data ) {
   console.log( JSON.stringify(data, null, 2) );
   var req = {};
-  req.symbols = "#USD/CHF,#USD/JPY,#EUR/USD,#EUR/GBP";
-  lastBid["USD/CHF"] = 0;
-  lastBid["USD/JPY"] = 0;
-  lastBid["EUR/USD"] = 0;
-  lastBid["EUR/GBP"] = 0;
-  lastAsk["USD/CHF"] = 0;
-  lastAsk["USD/JPY"] = 0;
-  lastAsk["EUR/USD"] = 0;
-  lastAsk["EUR/GBP"] = 0;
-  lastTrade["USD/CHF"] = 0;
-  lastTrade["USD/JPY"] = 0;
-  lastTrade["EUR/USD"] = 0;
-  lastTrade["EUR/GBP"] = 0;
+  req.symbols = "XLK,XLU,XLF";
+  lastBid["XLK"] = 0;
+  lastBid["XLU"] = 0;
+  lastBid["XLF"] = 0;
+  lastAsk["XLK"] = 0;
+  lastAsk["XLU"] = 0;
+  lastAsk["XLF"] = 0;
+  lastTrade["XLK"] = 0;
+  lastTrade["XLU"] = 0;
+  lastTrade["XLF"] = 0;
   req.requestType = "StreamRequestSubscribe";
   var reqNum = api.sendATQuoteStreamRequest(req);
 
@@ -52,18 +49,14 @@ api.handlers["ATStreamQuoteUpdate"] = function ( msg ) {
   var askPrice = msg.data.askPrice.price.round(msg.data.askPrice.precision);
   if ( lastBid[msg.data.ATSymbol.symbolStr] > bidPrice ) {
     bidText = colors.green(bidPrice.toString());
-  } else if ( lastBid[msg.data.ATSymbol.symbolStr] < bidPrice ) {
-    bidText = colors.red(bidPrice.toString());
   } else {
-    bidText = colors.gray(bidPrice.toString());
+    bidText = colors.red(bidPrice.toString());
   }
   lastBid[msg.data.ATSymbol.symbolStr] = bidPrice;
   if ( lastAsk[msg.data.ATSymbol.symbolStr] > askPrice ) {
     askext = colors.green(askPrice.toString());
-  } else if ( lastAsk[msg.data.ATSymbol.symbolStr] > askPrice ) {
-    askText = colors.red(askPrice.toString());
   } else {
-    askText = colors.gray(askPrice.toString());
+    askText = colors.red(askPrice.toString());
   }
   var padding = "";
   if (atTime.milliseconds < 100)
@@ -71,10 +64,10 @@ api.handlers["ATStreamQuoteUpdate"] = function ( msg ) {
   else if (atTime.milliseconds < 10)
     padding = "  ";
   lastAsk[msg.data.ATSymbol.symbolStr] = askPrice;
-  console.log(colors.gray(atTime.year + "-" + atTime.month + "-" + atTime.day + " " +
+  console.log(atTime.year + "-" + atTime.month + "-" + atTime.day + " " +
               atTime.hour + ":" + atTime.minute + ":" + atTime.second + ":" +
               atTime.milliseconds + padding + " [QUOTE] " +
-              msg.data.ATSymbol.symbolStr + " ") +
+              msg.data.ATSymbol.symbolStr + " " +
               colors.gray(msg.data.bidSize) + " | " +
               bidText + " - " +
               askText + " | " +
@@ -88,22 +81,15 @@ api.handlers["ATStreamTradeUpdate"] = function ( msg ) {
   var lastPrice = msg.data.lastPrice.price.round(msg.data.lastPrice.precision);
   if ( lastTrade[msg.data.ATSymbol.symbolStr] > lastPrice ) {
     lastText = colors.green(lastPrice.toString());
-  } else if ( lastTrade[msg.data.ATSymbol.symbolStr] < lastPrice ) {
-    lastText = colors.red(lastPrice.toString());
   } else {
-    lastText = colors.gray(lastPrice.toString());
+    lastText = colors.red(lastPrice.toString());
   }
   lastTrade[msg.data.ATSymbol.symbolStr] = lastPrice;
-  var padding = "";
-  if (atTime.milliseconds < 100)
-    padding = " ";
-  else if (atTime.milliseconds < 10)
-    padding = "  ";
-  console.log(colors.gray(atTime.year + "-" + atTime.month + "-" + atTime.day + " " +
+  console.log(atTime.year + "-" + atTime.month + "-" + atTime.day + " " +
               atTime.hour + ":" + atTime.minute + ":" + atTime.second + ":" +
-              atTime.milliseconds + padding + " [TRADE] " +
+              atTime.milliseconds + " [TRADE] " +
               msg.data.ATSymbol.symbolStr + " " +
-              msg.data.lastSize + " @ ") + 
+              msg.data.lastSize + " @ " + 
               lastText );
 };
 
