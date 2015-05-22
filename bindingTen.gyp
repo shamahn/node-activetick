@@ -10,6 +10,7 @@
                   ,"Streamer.cpp"
                   ,"AtJsonParserTen.cpp"
                   ,"Jsonifier.cpp"
+                  ,"AtEnumConverter.cpp"
                   ,"import/example/Helper.cpp"
                   ,"import/libjson/_internal/Source/JSONAllocator.cpp"
                   ,"import/libjson/_internal/Source/JSONChildren.cpp"
@@ -29,10 +30,10 @@
         './import/include/',
         './import/Shared/'
       ],
-      "cflags":  ['-c -O3 -ffast-math -fexpensive-optimizations -DNDEBUG'],
-      "cflags_cc": ['-c -O3 -ffast-math -fexpensive-optimizations -DNDEBUG'],
-      'cflags!': [ '-fno-exceptions' ],
-      'cflags_cc!': [ '-fno-exceptions' ],
+      "cflags":  ['-c -O3 -ffast-math -fexpensive-optimizations -DNDEBUG -fexceptions'],
+      "cflags_cc": ['-c -O3 -ffast-math -fexpensive-optimizations -DNDEBUG -fexceptions'],
+      'cflags!': [ '-fno-rtti' ],
+      'cflags_cc!': [ '-fno-rtti' ],
       'conditions': [
         ['OS=="mac"', {
           'xcode_settings': {
