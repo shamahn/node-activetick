@@ -19,5 +19,7 @@ public:
     static std::string getSymbolType( uint8_t symbolType );
     static std::string getExchangeType( uint8_t exchangeType );
     static std::string getCountryType( uint8_t countryType );
+    static std::string getFieldStatus( uint8_t fieldStatus );
+    static std::string getQuoteFieldType( uint8_t quoteFieldType );
 
 };
