@@ -50,21 +50,22 @@ api.handlers["ATStreamQuoteUpdate"] = function ( msg ) {
   var askText = "";
   var bidPrice = msg.data.bidPrice.price.round(msg.data.bidPrice.precision);
   var askPrice = msg.data.askPrice.price.round(msg.data.askPrice.precision);
-  if ( lastBid[msg.data.ATSymbol.symbolStr] > bidPrice ) {
+  if ( lastBid[msg.data.ATSymbol.symbolStr] < bidPrice ) {
     bidText = colors.green(bidPrice.toString());
-  } else if ( lastBid[msg.data.ATSymbol.symbolStr] < bidPrice ) {
+  } else if ( lastBid[msg.data.ATSymbol.symbolStr] > bidPrice ) {
     bidText = colors.red(bidPrice.toString());
   } else {
     bidText = colors.gray(bidPrice.toString());
   }
   lastBid[msg.data.ATSymbol.symbolStr] = bidPrice;
-  if ( lastAsk[msg.data.ATSymbol.symbolStr] > askPrice ) {
-    askext = colors.green(askPrice.toString());
+  if ( lastAsk[msg.data.ATSymbol.symbolStr] < askPrice ) {
+    askText = colors.green(askPrice.toString());
   } else if ( lastAsk[msg.data.ATSymbol.symbolStr] > askPrice ) {
     askText = colors.red(askPrice.toString());
   } else {
     askText = colors.gray(askPrice.toString());
   }
+  lastAsk[msg.data.ATSymbol.symbolStr] = askPrice;
   var padding = "";
   if (atTime.milliseconds < 100)
     padding = " ";
@@ -86,9 +87,9 @@ api.handlers["ATStreamTradeUpdate"] = function ( msg ) {
   var atTime = msg.data.time;
   var lastText = "";
   var lastPrice = msg.data.lastPrice.price.round(msg.data.lastPrice.precision);
-  if ( lastTrade[msg.data.ATSymbol.symbolStr] > lastPrice ) {
+  if ( lastTrade[msg.data.ATSymbol.symbolStr] < lastPrice ) {
     lastText = colors.green(lastPrice.toString());
-  } else if ( lastTrade[msg.data.ATSymbol.symbolStr] < lastPrice ) {
+  } else if ( lastTrade[msg.data.ATSymbol.symbolStr] > lastPrice ) {
     lastText = colors.red(lastPrice.toString());
   } else {
     lastText = colors.gray(lastPrice.toString());

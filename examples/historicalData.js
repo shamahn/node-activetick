@@ -89,6 +89,5 @@ var connected = api.connect( process.env.ATAPIKEY,
                              process.env.ATPWD );
 
 if (connected) {
-
   api.beginProcessing();
 }
