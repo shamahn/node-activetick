@@ -60,7 +60,6 @@ private:
 
 private:
     JSONNode getInboundMsg();
-    char *getChar( v8::Local<v8::Value> value, const char *fallback );
 
 private:
     APISession m_session;
