@@ -13,6 +13,11 @@ echo "Node 0.10 detected"
 cp ./bindingTen.gyp ./binding.gyp
 fi
 
+if [ "$(node -v | cut -c 1-5)" = "v0.12" ]; then
+echo "Node 0.12 detected"
+cp ./bindingTwelve.gyp ./binding.gyp
+fi
+
 cd $DIR
 rm -rf libjson
 rm libjson_7.6.1.zip
