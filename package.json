@@ -1,12 +1,13 @@
 {
   "name": "activetick",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Activetick API addon for NodeJS ",
   "main": "activetick.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
+    "preinstall": "sh preinstall.sh",
     "install": "node-gyp rebuild"
   },
   "repository": {
