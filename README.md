@@ -7,7 +7,8 @@ ActiveTick API addon for Node.js
 Author: Jae Yang - [dchem] (https://github.com/dchem/)
 
 ### Change Notes:
-* 2014-02-18 - 0.0.1 - Initial commit
+* 2015-05-25 - 1.0.0 - Working 1.0 version
+* 2015-02-18 - 0.0.1 - Initial commit
 
 ### Installation dependency
 * Download Activetick cppsdk from Activetick.com website, unpack into working

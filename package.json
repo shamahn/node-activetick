@@ -1,6 +1,6 @@
 {
   "name": "activetick",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Activetick API addon for NodeJS ",
   "main": "activetick.js",
   "directories": {
