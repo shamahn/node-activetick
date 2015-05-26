@@ -1,6 +1,6 @@
 DIR="./import"
 IMPATK="../../atfeed-cppsdk"
-
+rm -rf ./import
 if [ ! -d "$DIR" ]
 then
     mkdir $DIR
@@ -10,12 +10,12 @@ cp -r $IMPATK $DIR
 
 if [ "$(node -v | cut -c 1-5)" = "v0.10" ]; then
 echo "Node 0.10 detected"
-cp ./bindingTen.gyp ./binding.gyp
+mv ./bindingTen.gyp ./binding.gyp
 fi
 
 if [ "$(node -v | cut -c 1-5)" = "v0.12" ]; then
 echo "Node 0.12 detected"
-cp ./bindingTwelve.gyp ./binding.gyp
+mv ./bindingTwelve.gyp ./binding.gyp
 fi
 
 cd $DIR
