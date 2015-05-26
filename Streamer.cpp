@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 #include "import/libjson/libjson.h"
-#include "import/example/Helper.h"
+#include "import/atfeed-cppsdk/example/Helper.h"
 
 using namespace std;
 

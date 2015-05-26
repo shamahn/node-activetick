@@ -10,6 +10,8 @@ Author: Jae Yang - [dchem] (https://github.com/dchem/)
 * 2014-02-18 - 0.0.1 - Initial commit
 
 ### Installation dependency
+* Download Activetick cppsdk from Activetick.com website, unpack into working
+  directory where you will run ```npm install activetick```.
 * Install Python 2.7
 * Install node-gyp
 ```
@@ -32,17 +34,17 @@ mingw-get install msys-wget
 
 ### Installation from NPM:
 ```
-npm install ibapi
+npm install activetick
 ```
 
 For Windows with MSVS 2013:
 ```
-npm install ibapi --msvs_version=2013
+npm install activetick --msvs_version=2013
 ```
 
 For Windows with MSVS 2012:
 ```
-npm install ibapi --msvs_version=2012
+npm install activetick --msvs_version=2012
 ```
 Alternatively, include GYP_MSVS_VERSION=2012 or GYP_MSVS_VERSION=2013 in 
 environment variables for Windows.
@@ -62,16 +64,62 @@ environment variables for Windows.
 4. If build fails because you have VS2012, use ```node-gyp --msvs_version=2012 rebuild```
 
 ### Usage
-TODO
+1. Require activetick
+2. Create event handlers
+3. Register event handlers for messageIds
+4. Incoke connect
+5. ...
+6. Profit!
+
+```js
+var addon = require('activetick');
+var messageIds = addon.messageIds;
+var api = new addon.NodeActivetick();
+
+var activetickCb = function (data) {
+  console.log(JSON.stringify(data,null,2));
+};
+
+// See messageId.js for message types to be tracked
+Object.keys(messageIds).forEach(function (messageId) {
+  api.handlers[messageId] = activetickCb;
+});
+
+// Don't put credentials in your scripts. Make sure you export
+//   them as environment variables
+var connected = api.connect( process.env.ATAPIKEY,
+                             "activetick1.activetick.com",
+                             5000,
+                             process.env.ATUID,
+                             process.env.ATPWD );
+
+if (connected) {
+  api.beginProcessing();
+}
+```
 
 ## Activetick API Methods
-TODO
+For more details, see activetick.js or run jsdoc on the package directory
+```js
+.getSessionHandle()
+.closeAllATRequests()
+.closeATRequest()
+.sendATBarHistoryDbRequest( request )
+.sendATLoginRequest( request )
+.sendATMarketHolidaysRequest( request )
+.sendATMarketMoversDbRequest( request )
+.sendATMarketMoversStreamRequest( request )
+.sendATQuoteDbRequest( request )
+.sendATQuoteStreamRequest( request )
+.sendATTickHistoryDbRequest( request )
+.sendATSectorListRequest( request )
+.sendATConstituentListRequest( request )
+.connect( apiKey, serverAddr, port, userid, passwd )
 
-### Tests:
-TODO
+```
 
 ### Issues:
-* See issues list in https://github.com/dchem/node-ibapi-addon/issues?state=open
+* See issues list in https://github.com/dchem/node-activetick-addon/issues?state=open
 
 ### License
-Copyright (c) 2014 Jae Yang. See LICENSE file for license rights and limitations (MIT).
+Copyright (c) 2015 Jae Yang. See LICENSE file for license rights and limitations (MIT).

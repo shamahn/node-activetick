@@ -1,14 +1,21 @@
 DIR="./import"
-LIBJSON="./libjson"
+IMPATK="../../atfeed-cppsdk"
 
 if [ ! -d "$DIR" ]
 then
     mkdir $DIR
 fi
 
+cp -r $IMPATK $DIR
+
 if [ "$(node -v | cut -c 1-5)" = "v0.10" ]; then
 echo "Node 0.10 detected"
 cp ./bindingTen.gyp ./binding.gyp
+fi
+
+if [ "$(node -v | cut -c 1-5)" = "v0.12" ]; then
+echo "Node 0.12 detected"
+cp ./bindingTwelve.gyp ./binding.gyp
 fi
 
 cd $DIR

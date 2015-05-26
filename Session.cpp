@@ -4,7 +4,7 @@
 #include <cstring>
 
 #include <node.h>
-#include "import/example/Helper.h"
+#include "import/atfeed-cppsdk/example/Helper.h"
 #include "import/libjson/libjson.h"
 
 APISession* APISession::s_pInstance = NULL;
