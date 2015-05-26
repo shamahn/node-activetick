@@ -10,7 +10,7 @@
 #include "AtEnumConverter.h"
 
 #include <ActiveTickServerAPI/ActiveTickServerAPI.h>
-#include "import/example/Helper.h"
+#include "import/atfeed-cppsdk/example/Helper.h"
 #include "import/libjson/_internal/Source/JSONNode.h"
 
 using namespace v8;

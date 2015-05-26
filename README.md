@@ -10,6 +10,8 @@ Author: Jae Yang - [dchem] (https://github.com/dchem/)
 * 2014-02-18 - 0.0.1 - Initial commit
 
 ### Installation dependency
+* Download Activetick cppsdk from Activetick.com website, unpack into working
+  directory where you will run ```npm install activetick```.
 * Install Python 2.7
 * Install node-gyp
 ```
@@ -32,17 +34,17 @@ mingw-get install msys-wget
 
 ### Installation from NPM:
 ```
-npm install ibapi
+npm install activetick
 ```
 
 For Windows with MSVS 2013:
 ```
-npm install ibapi --msvs_version=2013
+npm install activetick --msvs_version=2013
 ```
 
 For Windows with MSVS 2012:
 ```
-npm install ibapi --msvs_version=2012
+npm install activetick --msvs_version=2012
 ```
 Alternatively, include GYP_MSVS_VERSION=2012 or GYP_MSVS_VERSION=2013 in 
 environment variables for Windows.
@@ -71,7 +73,7 @@ TODO
 TODO
 
 ### Issues:
-* See issues list in https://github.com/dchem/node-ibapi-addon/issues?state=open
+* See issues list in https://github.com/dchem/node-activetick-addon/issues?state=open
 
 ### License
-Copyright (c) 2014 Jae Yang. See LICENSE file for license rights and limitations (MIT).
+Copyright (c) 2015 Jae Yang. See LICENSE file for license rights and limitations (MIT).

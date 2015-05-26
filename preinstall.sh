@@ -1,10 +1,12 @@
 DIR="./import"
-LIBJSON="./libjson"
+IMPATK="../../atfeed-cppsdk"
 
 if [ ! -d "$DIR" ]
 then
     mkdir $DIR
 fi
+
+cp -r $IMPATK $DIR
 
 if [ "$(node -v | cut -c 1-5)" = "v0.10" ]; then
 echo "Node 0.10 detected"

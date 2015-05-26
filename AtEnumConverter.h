@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <map>
-#include "./import/include/Shared/ATServerAPIDefines.h"
+#include "./import/atfeed-cppsdk/include/Shared/ATServerAPIDefines.h"
 
 class AtEnumConverter {
 

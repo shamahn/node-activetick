@@ -12,7 +12,7 @@
 #include <string.h>
 
 #include <node.h>
-#include "import/example/Helper.h"
+#include "import/atfeed-cppsdk/example/Helper.h"
 #include "import/libjson/libjson.h"
 
 using namespace std;

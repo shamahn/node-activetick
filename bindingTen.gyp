@@ -11,7 +11,7 @@
                   ,"AtJsonParserTen.cpp"
                   ,"Jsonifier.cpp"
                   ,"AtEnumConverter.cpp"
-                  ,"import/example/Helper.cpp"
+                  ,"import/atfeed-cppsdk/example/Helper.cpp"
                   ,"import/libjson/_internal/Source/JSONAllocator.cpp"
                   ,"import/libjson/_internal/Source/JSONChildren.cpp"
                   ,"import/libjson/_internal/Source/JSONIterators.cpp"
@@ -27,8 +27,8 @@
                   ,"import/libjson/_internal/Source/libjson.cpp"
                  ],
       'include_dirs': [
-        './import/include/',
-        './import/Shared/'
+        './import/atfeed-cppsdk/include/',
+        './import/atfeed-cppsdk/include/Shared/'
       ],
       "cflags":  ['-c -O3 -ffast-math -fexpensive-optimizations -DNDEBUG -fexceptions'],
       "cflags_cc": ['-c -O3 -ffast-math -fexpensive-optimizations -DNDEBUG -fexceptions'],
@@ -41,7 +41,7 @@
           },
           'link_settings': {
             'libraries': [
-              "../import/bin/libActiveTickServerAPI.dylib",
+              "../import/atfeed-cppsdk/bin/libActiveTickServerAPI.dylib",
               "-lpthread"
             ]
           }
@@ -49,7 +49,7 @@
         ['OS=="linux"', {
           'link_settings': {
             'libraries': [
-              "../import/bin/libActiveTickServerAPI.so",
+              "../import/atfeed-cppsdk/bin/libActiveTickServerAPI.so",
               "-lpthread"
             ]
           }
