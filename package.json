@@ -1,0 +1,51 @@
+{
+  "name": "activetick",
+  "version": "1.0.0",
+  "description": "Activetick API addon for NodeJS ",
+  "main": "activetick.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "install": "node-gyp rebuild"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dchem/node-activetick-addon.git"
+  },
+  "dependencies": {
+    "async": "^0.9.0",
+    "limiter": "^1.0.5"
+  },
+  "keywords": [
+    "activetick",
+    "finance",
+    "stock",
+    "bond",
+    "option",
+    "forex",
+    "future",
+    "ticker",
+    "symbol",
+    "quote",
+    "market",
+    "data",
+    "automated",
+    "invest",
+    "trade",
+    "trading",
+    "system",
+    "api",
+    "client",
+    "library"
+  ],
+  "author": {
+    "name": "Jae Yang",
+    "email": "jaey226@gmail.com"
+  },
+  "license": "MIT",
+  "gypfile": true,
+  "bugs": {
+    "url": "https://github.com/dchem/node-activetick-addon/issues"
+  }
+}
