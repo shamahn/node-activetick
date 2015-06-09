@@ -67,15 +67,11 @@ bool APISession::Destroy()
     default: break;
     }
 
-    printf("RECV Status change [%s]\n", strStatusType.c_str());
 
     if(statusType == SessionStatusConnected)
     {
         APISession::s_pInstance->m_hLastRequest = ATCreateLoginRequest(hSession, APISession::s_pInstance->m_userid, APISession::s_pInstance->m_password, APISession::ATLoginResponseCallback);
         bool rc = ATSendRequest(hSession, APISession::s_pInstance->m_hLastRequest, DEFAULT_REQUEST_TIMEOUT, APISession::ATRequestTimeoutCallback);
-
-        printf("SEND (%llu): Login request [%s] (rc=%d)\n", APISession::s_pInstance->m_hLastRequest, Helper::ConvertString(APISession::s_pInstance->m_userid, 
-            Helper::StringLength(APISession::s_pInstance->m_userid)).c_str(), rc);
     }
     JSONNode n( JSON_NODE );
     n.push_back( JSONNode( "messageId", "ATSessionStatus" ) );
