@@ -95,7 +95,7 @@ var quotedata =
            [ "00:00:00", "EUR/USD", "0.00000", "0.00000" ]
          ];
 
-var tradetable = grid.set(0, 4, 4, 4, contrib.table,
+var tradetable = grid.set(0, 4, 4, 3, contrib.table,
      { keys: true
      , fg: 'white'
      , selectedFg: 'white'
@@ -106,9 +106,9 @@ var tradetable = grid.set(0, 4, 4, 4, contrib.table,
      , height: '30%'
      , border: {type: "line", fg: "cyan"}
      , columnSpacing: 2 //in chars
-     , columnWidth: [16, 12, 12] /*in chars*/ });
+     , columnWidth: [9, 8, 13] /*in chars*/ });
 
-var quotetable = grid.set(4, 4, 4, 4, contrib.table,
+var quotetable = grid.set(4, 4, 4, 3, contrib.table,
      { keys: true
      , fg: 'white'
      , selectedFg: 'white'
@@ -119,7 +119,7 @@ var quotetable = grid.set(4, 4, 4, 4, contrib.table,
      , height: '30%'
      , border: {type: "line", fg: "cyan"}
      , columnSpacing: 2 //in chars
-     , columnWidth: [8, 8, 13, 13] /*in chars*/ });
+     , columnWidth: [9, 8, 13, 13] /*in chars*/ });
    //allow control the table with the keyboard
 tradetable.focus();
 tradetable.setData({ headers: ['time', 'symbol', 'lastPrice'], data: tabledata });
@@ -196,7 +196,7 @@ var ATStreamQuoteUpdate = function ( msg ) {
 var ATStreamTradeUpdate = function ( msg ) {
   var atTime = msg.data.time;
   var lastText = "";
-  var lastPrice = msg.data.lastPrice.price.round(msg.data.lastPrice.precision);
+  var lastPrice = msg.data.lastPrice.price.round(msg.data.lastPrice.precision).toPrecision(6);
   if ( lastTrade[msg.data.ATSymbol.symbolStr] < lastPrice ) {
     lastText = colors.green(lastPrice.toString());
   } else if ( lastTrade[msg.data.ATSymbol.symbolStr] > lastPrice ) {
