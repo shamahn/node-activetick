@@ -48,5 +48,6 @@
   "gypfile": true,
   "bugs": {
     "url": "https://github.com/dchem/node-activetick-addon/issues"
-  }
+  },
+  "homepage": "https://github.com/dchem/node-activetick-addon"
 }
