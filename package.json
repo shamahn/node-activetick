@@ -1,6 +1,6 @@
 {
   "name": "activetick",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Activetick API addon for NodeJS ",
   "main": "activetick.js",
   "directories": {
@@ -48,5 +48,6 @@
   "gypfile": true,
   "bugs": {
     "url": "https://github.com/dchem/node-activetick-addon/issues"
-  }
+  },
+  "homepage": "https://github.com/dchem/node-activetick-addon"
 }
