@@ -7,6 +7,7 @@ ActiveTick API addon for Node.js
 Author: Jae Yang - [dchem] (https://github.com/dchem/)
 
 ### Change Notes:
+* 2015-06-27 - 1.0.8 - Fixes build (removed sourceforge)
 * 2015-05-25 - 1.0.0 - Working 1.0 version
 * 2015-02-18 - 0.0.1 - Initial commit
 

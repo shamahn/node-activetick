@@ -18,9 +18,8 @@ fi
 
 cd $DIR
 rm -rf libjson
-rm libjson_7.6.1.zip
-wget -U "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:34.0) Gecko/20100101 Firefox/34.0" http://softlayer-dal.dl.sourceforge.net/project/libjson/libjson_7.6.1.zip
-unzip libjson_7.6.1.zip
+
+git clone https://github.com/dchem/libjson.git
 
 if [ "$(uname)" = "Darwin" ]; then
 sed -ie 's@#define JSON_LIBRARY@//#define JSON_LIBRARY@g' ./libjson/JSONOptions.h
