@@ -1,6 +1,6 @@
 {
   "name": "activetick",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Activetick API addon for NodeJS ",
   "main": "activetick.js",
   "directories": {
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/dchem/node-activetick-addon.git"
+    "url": "https://gitlord.com/r/~dchem/node-activetick-addon.git"
   },
   "dependencies": {
     "async": "^0.9.0",
@@ -47,7 +47,7 @@
   "license": "MIT",
   "gypfile": true,
   "bugs": {
-    "url": "https://github.com/dchem/node-activetick-addon/issues"
+    "url": "https://gitlord.com/tickets/~dchem%2Fnode-activetick-addon.git?status=new&status=open"
   },
-  "homepage": "https://github.com/dchem/node-activetick-addon"
+  "homepage": "https://gitlord.com/summary/~dchem%2Fnode-activetick-addon.git"
 }
