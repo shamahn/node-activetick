@@ -247,7 +247,7 @@ JSONNode Requestor::jsonifyAtTickHistory( LPATTICKHISTORY_RESPONSE pResponse ) {
                                     parser.GetTradeLastPrice().price ) );
                 tick.push_back( last );
                 tick.push_back( JSONNode( "tradeLastSize", parser.GetTradeLastSize() ) );
-                tick.push_back( JSONNode( "tradeLastExchange", m_jsonifier.getExchangeType[parser.GetTradeLastExchange()] ) );
+                tick.push_back( JSONNode( "tradeLastExchange", m_jsonifier.getExchangeType(parser.GetTradeLastExchange()) ) );
                 tick.push_back( JSONNode( "tradeCondition", parser.GetTradeCondition(0) ) );
                 }
                 break;
