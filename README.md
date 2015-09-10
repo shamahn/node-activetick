@@ -1,16 +1,18 @@
 node-activetick-addon
 =====================
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dchem/node-activetick-addon?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-[![Build Status](http://gitlord.com:8080/buildStatus/icon?job=node-activetick-addon)](http://gitlord.com:8080/job/node-activetick-addon/)
+
+[![Build Status](https://gitlord.com:8080/job/node-activetick-addon/badge/icon)](https://gitlord.com:8080/job/node-activetick-addon)
 
 ActiveTick API addon for Node.js
 
 Author: Jae Yang - [dchem] (https://github.com/dchem/)
 
 ### Change Notes:
-* 2015-06-27 - 1.0.8 - Fixes build (removed sourceforge)
-* 2015-05-25 - 1.0.0 - Working 1.0 version
-* 2015-02-18 - 0.0.1 - Initial commit
+* 2015-09-09 - 1.0.10 - Removes github nonsense
+* 2015-06-27 - 1.0.8  - Fixes build (removed sourceforge)
+* 2015-05-25 - 1.0.0  - Working 1.0 version
+* 2015-02-18 - 0.0.1  - Initial commit
 
 ### Installation dependency
 * Download Activetick cppsdk from Activetick.com website, unpack into working
@@ -59,7 +61,7 @@ environment variables for Windows.
 
 ### Installation from git repo:
 
-1. Make sure to have Activetick API package downloaded to the same directory as this project
+1. Make sure to have Activetick API package downloaded to two directories up from this project
 2. Run the preinstall.sh which does the following:
   * Copies the Activetick API package and places them in the import directory
   * Download libjson 7.6.1
