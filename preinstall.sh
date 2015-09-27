@@ -14,8 +14,8 @@ cp ./bindingTen.pyg ./binding.gyp
 elif [ "$(node -v | cut -c 1-5)" = "v0.12" ]; then
 echo "Node 0.12 detected"
 cp ./bindingTwelve.pyg ./binding.gyp
-elif [ "$(node -v | cut -c 1-5)" = "v4.0." ]; then
-echo "Node 4.0 detected"
+elif [ "$(node -v | cut -c 1-3)" = "v4." ]; then
+echo "Node 4 detected"
 cp ./bindingTwelve.pyg ./binding.gyp
 fi
 
