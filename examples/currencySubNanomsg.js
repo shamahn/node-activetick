@@ -4,7 +4,6 @@ var colors = require('colors/safe');
 var sub = nano.socket('sub');
 var addr = 'tcp://127.0.0.1:7789';
 // blessed dashboard
-//
 
 var blessed = require('blessed');
 var contrib = require('blessed-contrib');
@@ -106,7 +105,7 @@ var tradetable = grid.set(0, 4, 4, 3, contrib.table,
      , height: '30%'
      , border: {type: "line", fg: "cyan"}
      , columnSpacing: 2 //in chars
-     , columnWidth: [9, 8, 13] /*in chars*/ });
+     , columnWidth: [9, 8, 13]});
 
 var quotetable = grid.set(4, 4, 4, 3, contrib.table,
      { keys: true
@@ -119,7 +118,7 @@ var quotetable = grid.set(4, 4, 4, 3, contrib.table,
      , height: '30%'
      , border: {type: "line", fg: "cyan"}
      , columnSpacing: 2 //in chars
-     , columnWidth: [9, 8, 13, 13] /*in chars*/ });
+     , columnWidth: [9, 8, 13, 13]});
    //allow control the table with the keyboard
 tradetable.focus();
 tradetable.setData({ headers: ['time', 'symbol', 'lastPrice'], data: tabledata });
@@ -132,18 +131,15 @@ screen.key(['escape', 'q', 'C-c'], function(ch, key) {
 });
 
 screen.render();
-
 // sub binding
 sub.connect(addr);
-sub.on('message', function (buf) {
+sub.on('data', function (buf) {
   var msg = JSON.parse(buf.toString());
-
   if (msg.messageId === "ATStreamQuoteUpdate" )
     ATStreamQuoteUpdate(msg);
   else if (msg.messageId === "ATStreamTradeUpdate")
     ATStreamTradeUpdate(msg);
 });
-
 Number.prototype.round = function(places) {
   return +(Math.round(this + "e+" + places)  + "e-" + places);
 }
