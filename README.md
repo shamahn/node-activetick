@@ -9,6 +9,7 @@ ActiveTick API addon for Node.js
 Author: Jae Yang - [dchem] (https://github.com/dchem/)
 
 ### Change Notes:
+* 2015-09-26 - 1.0.11 - Adds Node 4.0 support
 * 2015-09-09 - 1.0.10 - Removes github nonsense
 * 2015-06-27 - 1.0.8  - Fixes build (removed sourceforge)
 * 2015-05-25 - 1.0.0  - Working 1.0 version
@@ -124,7 +125,7 @@ For more details, see activetick.js or run jsdoc on the package directory
 ```
 
 ### Issues:
-* See issues list in https://github.com/dchem/node-activetick-addon/issues?state=open
+* See issues list in https://gitlord.com/tickets/~dchem%2Fnode-activetick-addon.git?status=new&status=open
 
 ### License
 Copyright (c) 2015 Jae Yang. See LICENSE file for license rights and limitations (MIT).

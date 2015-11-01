@@ -10,16 +10,19 @@ cp -r $IMPATK $DIR
 
 if [ "$(node -v | cut -c 1-5)" = "v0.10" ]; then
 echo "Node 0.10 detected"
-mv ./bindingTen.pyg ./binding.gyp
+cp ./bindingTen.pyg ./binding.gyp
 elif [ "$(node -v | cut -c 1-5)" = "v0.12" ]; then
 echo "Node 0.12 detected"
-mv ./bindingTwelve.pyg ./binding.gyp
+cp ./bindingTwelve.pyg ./binding.gyp
+elif [ "$(node -v | cut -c 1-3)" = "v4." ]; then
+echo "Node 4 detected"
+cp ./bindingTwelve.pyg ./binding.gyp
 fi
 
 cd $DIR
 rm -rf libjson
 
-git clone https://github.com/dchem/libjson.git
+git clone https://gitlord.com/r/libjson.git
 
 if [ "$(uname)" = "Darwin" ]; then
 sed -ie 's@#define JSON_LIBRARY@//#define JSON_LIBRARY@g' ./libjson/JSONOptions.h

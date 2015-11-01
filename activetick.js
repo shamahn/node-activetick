@@ -245,9 +245,11 @@ NodeActivetick.prototype = {
   sendATMarketMoversStreamRequest: function ( req ) {
     this.doAction( function () {
       if ( !('timeout' in req) ) {
-        return this.client.sendATMarketMoversStreamRequest( req.symbols );
+        return this.client.sendATMarketMoversStreamRequest( req.symbol,
+                                                            req.requestType );
       } else {
-        return this.client.sendATMarketMoversStreamRequest( req.symbols,
+        return this.client.sendATMarketMoversStreamRequest( req.symbol,
+                                                            req.requestType,
                                                             req.timeout );
       }
     });
