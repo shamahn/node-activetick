@@ -11,12 +11,6 @@ cp -r $IMPATK $DIR
 if [ "$(node -v | cut -c 1-5)" = "v0.10" ]; then
 echo "Node 0.10 detected"
 cp ./bindingTen.pyg ./binding.gyp
-elif [ "$(node -v | cut -c 1-5)" = "v0.12" ]; then
-echo "Node 0.12 detected"
-cp ./bindingTwelve.pyg ./binding.gyp
-elif [ "$(node -v | cut -c 1-3)" = "v4." ]; then
-echo "Node 4 detected"
-cp ./bindingTwelve.pyg ./binding.gyp
 fi
 
 cd $DIR

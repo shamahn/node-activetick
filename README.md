@@ -2,11 +2,11 @@ node-activetick-addon
 =====================
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dchem/node-activetick-addon?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-[![Build Status](https://gitlord.com:8080/job/node-activetick-addon/badge/icon)](https://gitlord.com:8080/job/node-activetick-addon)
+[![Build Status](https://leeroy.gitlord.com/job/node-activetick-addon/badge/icon)](https://leeroy.gitlord.com/job/node-activetick-addon)
 
 ActiveTick API addon for Node.js
 
-Author: Jae Yang - [dchem] (https://github.com/dchem/)
+Author: Jae Yang - [dchem] (https://keybase.io/dchem)
 
 ### Change Notes:
 * 2015-09-26 - 1.0.11 - Adds Node 4.0 support
