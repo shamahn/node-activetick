@@ -262,7 +262,7 @@ NodeActivetick.prototype = {
     * @param {string} req[].symbols - String of symbols, comma separated
     *   symbol1,symbol2,...
     * @param {string} req[].fields - String of fields, comma separated
-    *   see import/include/Shared/ATServerAPIDefines.h for ATQuoteFieldType
+    *   see import/atfeed-cppsdk/include/Shared/ATServerAPIDefines.h for ATQuoteFieldType
     * @param {int} [req[].timeout] - Timeout in milliseconds
     */
   sendATQuoteDbRequest: function ( req ) {

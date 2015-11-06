@@ -2,7 +2,7 @@ node-activetick-addon
 =====================
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dchem/node-activetick-addon?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
-[![Build Status](https://leeroy.gitlord.com/job/node-activetick-addon/badge/icon)](https://leeroy.gitlord.com/job/node-activetick-addon)
+[![Build Status](https://leeroy.gitlord.com/job/node-activetick-addon-n4.2.1-release/badge/icon)](https://leeroy.gitlord.com/job/node-activetick-addon-n4.2.1-release)
 
 ActiveTick API addon for Node.js
 
