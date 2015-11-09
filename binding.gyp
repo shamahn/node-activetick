@@ -41,7 +41,7 @@
           },
           'link_settings': {
             'libraries': [
-              "../import/atfeed-cppsdk/bin/libActiveTickServerAPI.dylib",
+              "<(module_root_dir)/import/atfeed-cppsdk/bin/libActiveTickServerAPI.dylib",
               "-lpthread"
             ]
           }
@@ -49,7 +49,7 @@
         ['OS=="linux"', {
           'link_settings': {
             'libraries': [
-              "../import/atfeed-cppsdk/bin/libActiveTickServerAPI.so",
+              "<(module_root_dir)/import/atfeed-cppsdk/bin/libActiveTickServerAPI.so",
               "-lpthread"
             ]
           }
