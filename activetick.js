@@ -119,13 +119,13 @@ NodeActivetick.prototype = {
     this.doAction( function () {
       if ( 'beginDateTime' in req && 'endDateTime' in req ) {
         if ( !('timeout' in req) ) {
-          return this.client.sendATBarHistoryRequest( req.symbol,
+          return this.client.sendATBarHistoryDbRequest( req.symbol,
                                                req.barHistoryType,
                                                req.intradayMinuteCompression,
                                                req.beginDateTime,
                                                req.endDateTime );
         } else {
-          return this.client.sendATBarHistoryRequest( req.symbol,
+          return this.client.sendATBarHistoryDbRequest( req.symbol,
                                                req.barHistoryType,
                                                req.intradayMinuteCompression,
                                                req.beginDateTime,
@@ -134,12 +134,12 @@ NodeActivetick.prototype = {
         }
       } else if ( 'recordsWanted' in req && !('beginDateTime' in req) ) {
         if ( !('timeout' in req) ) {
-          return this.client.sendATBarHistoryRequest( req.symbol,
+          return this.client.sendATBarHistoryDbRequest( req.symbol,
                                                req.barHistoryType,
                                                req.intradayMinuteCompression,
                                                req.recordsWanted );
         } else {
-          return this.client.sendATBarHistoryRequest( req.symbol,
+          return this.client.sendATBarHistoryDbRequest( req.symbol,
                                                req.barHistoryType,
                                                req.intradayMinuteCompression,
                                                req.recordsWanted,
@@ -147,14 +147,14 @@ NodeActivetick.prototype = {
         }
       } else if ( 'beginDateTime' in req && 'recordsWanted' in req ) {
         if ( !('timeout' in req) ) {
-          return this.client.sendATBarHistoryRequest( req.symbol,
+          return this.client.sendATBarHistoryDbRequest( req.symbol,
                                                req.barHistoryType,
                                                req.intradayMinuteCompression,
                                                req.beginDateTime,
                                                req.recordsWanted,
                                                req.cursorType );
         } else {
-          return this.client.sendATBarHistoryRequest( req.symbol,
+          return this.client.sendATBarHistoryDbRequest( req.symbol,
                                                req.barHistoryType,
                                                req.intradayMinuteCompression,
                                                req.beginDateTime,
