@@ -119,7 +119,8 @@ bool AtJsonParser::filterAsString( const std::string& node_name ) {
 
 
 bool AtJsonParser::filterAsNumber( const std::string& node_name ) {
-    if ( node_name == "price"
+    if ( node_name == "price" ||
+         node_name == "double"
        )
         return true;
     return false;

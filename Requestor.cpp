@@ -505,6 +505,11 @@ JSONNode Requestor::jsonifyAtQuoteDb( LPATQUOTEDB_RESPONSE pResponse,
                         dContent.push_back( m_jsonifier.jsonifyAtTime( "dateTime", pst ) );
                         }
                         break;
+                    case DataDouble:
+                        {
+                        dContent.push_back( JSONNode( "double", *(double*)parser.GetDataItemData() ) );
+                        }
+                        break;
                     default: break;
                     }
                     item.push_back( JSONNode( "dataItemQuoteFieldType", m_jsonifier.getQuoteFieldType( parser.GetDataItemQuoteFieldType() ) ) );
