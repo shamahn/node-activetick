@@ -1,8 +1,6 @@
 node-activetick-addon
 =====================
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dchem/node-activetick-addon?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-
-[![Build Status](https://leeroy.gitlord.com/job/node-activetick-addon-n4.2.1-release/badge/icon)](https://leeroy.gitlord.com/job/node-activetick-addon-n4.2.1-release)
+[![Build Status](https://leeroy.gitlord.com/buildStatus/icon?job=node-activetick-addon-n4.2.1-release)](https://leeroy.gitlord.com/job/node-activetick-addon-n4.2.1-release)
 
 ActiveTick API addon for Node.js
 
@@ -18,7 +16,7 @@ Author: Jae Yang - [dchem] (https://keybase.io/dchem)
 ### Installation dependency
 * Download Activetick cppsdk from Activetick.com website, unpack into working
   directory where you will run ```npm install activetick```.
-* Install Python 2.7
+* Install Python
 * Install node-gyp
 ```
 npm install node-gyp -g
@@ -52,7 +50,7 @@ For Windows with MSVS 2012:
 ```
 npm install activetick --msvs_version=2012
 ```
-Alternatively, include GYP_MSVS_VERSION=2012 or GYP_MSVS_VERSION=2013 in 
+Alternatively, include ```GYP_MSVS_VERSION=2012``` or ```GYP_MSVS_VERSION=2013``` in 
 environment variables for Windows.
 
 ### Additional installation dependency for OS X:
@@ -128,4 +126,4 @@ For more details, see activetick.js or run jsdoc on the package directory
 * See issues list in https://gitlord.com/tickets/~dchem%2Fnode-activetick-addon.git?status=new&status=open
 
 ### License
-Copyright (c) 2015 Jae Yang. See LICENSE file for license rights and limitations (MIT).
+Copyright (c) 2016 Jae Yang. See LICENSE file for license rights and limitations (MIT).
