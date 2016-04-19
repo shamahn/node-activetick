@@ -1,6 +1,6 @@
 node-activetick-addon
 =====================
-[![Build Status](https://leeroy.gitlord.com/buildStatus/icon?job=protobuf-activetick-n4.2.1-release)](https://leeroy.gitlord.com/job/protobuf-activetick-n4.2.1-release)
+[![Build Status](https://leeroy.gitlord.com/buildStatus/icon?job=node-activetick-addon-n4.2.1-release)](https://leeroy.gitlord.com/job/node-activetick-addon-n4.2.1-release)
 
 ActiveTick API addon for Node.js
 
