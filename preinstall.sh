@@ -1,5 +1,5 @@
 DIR="./import"
-IMPATK="../../atfeed-cppsdk"
+IMPATK="../../../atfeed-cppsdk"
 rm -rf ./import
 if [ ! -d "$DIR" ]
 then
@@ -7,11 +7,6 @@ then
 fi
 
 cp -r $IMPATK $DIR
-
-if [ "$(node -v | cut -c 1-5)" = "v0.10" ]; then
-echo "Node 0.10 detected"
-cp ./bindingTen.pyg ./binding.gyp
-fi
 
 cd $DIR
 rm -rf libjson
