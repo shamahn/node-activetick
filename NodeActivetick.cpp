@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <cstring>
 #include <locale>
 #include <sstream>
@@ -249,15 +250,15 @@ void NodeActivetick::SendATMarketMoversDbRequest(
     NodeActivetick *obj = ObjectWrap::Unwrap<NodeActivetick>( args.Holder() );
 
     // QUESTION is atSymbol.symbolType = SymbolTopMarketMovers; necessary?
-    std::string symbols( *String::Utf8Value( args[0]->ToString() ) );
-    std::vector<ATSYMBOL> atSymbols = Helper::StringToSymbols( symbols );
+    std::vector<ATSYMBOL> atSymbols = getATSymbols( isolate, obj->m_enumMap,
+                                                    args[0] );
 
     uint32_t timeout = DEFAULT_REQUEST_TIMEOUT;
     if ( args.Length() == 2 && args[1]->IsUint32() )
         timeout = args[1]->Uint32Value();
 
     uint64_t request = obj->m_requestor.SendATMarketMoversDbRequest(
-                            atSymbols.data(), (uint16_t)symbols.size(),
+                            atSymbols.data(), (uint16_t)atSymbols.size(),
                             timeout );
 
     args.GetReturnValue().Set( Integer::New( isolate, request ) );
@@ -292,8 +293,8 @@ void NodeActivetick::SendATQuoteDbRequest(
     HandleScope scope( isolate );
     NodeActivetick *obj = ObjectWrap::Unwrap<NodeActivetick>( args.Holder() );
 
-    std::string symbols( *String::Utf8Value( args[0]->ToString() ) );
-    std::vector<ATSYMBOL> atSymbols = Helper::StringToSymbols( symbols );
+    std::vector<ATSYMBOL> atSymbols = getATSymbols( isolate, obj->m_enumMap,
+                                                    args[0] );
 
     std::string quoteFieldStr( *String::Utf8Value( args[1]->ToString() ) );
     //
@@ -330,8 +331,8 @@ void NodeActivetick::SendATQuoteStreamRequest(
     HandleScope scope( isolate );
     NodeActivetick *obj = ObjectWrap::Unwrap<NodeActivetick>( args.Holder() );
 
-    std::string symbols( *String::Utf8Value( args[0]->ToString() ) );
-    std::vector<ATSYMBOL> atSymbols = Helper::StringToSymbols( symbols );
+    std::vector<ATSYMBOL> atSymbols = getATSymbols( isolate, obj->m_enumMap,
+                                                    args[0] );
 
     std::string requestStr( *String::Utf8Value( args[1]->ToString() ) );
     ATStreamRequestType requestType =
@@ -495,6 +496,119 @@ void NodeActivetick::GetMsg( const FunctionCallbackInfo<Value> &args ) {
 ///////////////////////////////////////////////////////////////////////////////
 // Helper methods
 ///////////////////////////////////////////////////////////////////////////////
+
+std::vector<ATSYMBOL> NodeActivetick::getATSymbols( Isolate* isolate,
+                                                    AtEnumConverter& converter,
+                                                    Local<Value> symbols ) {
+    std::vector<ATSYMBOL> atSymbols;
+    Handle<Object> obj = Handle<Object>::Cast(symbols);
+    if ( symbols->IsArray() ) {
+        Handle<Array> array = Handle<Array>::Cast(symbols);
+        Local<String> lengthStr = String::NewFromUtf8(isolate, "length");
+        uint32_t length = obj->Get(lengthStr)->ToObject()->Uint32Value();
+        for (size_t i = 0; i < length; i++) {
+            ATSYMBOL atSymbol;
+            memset(&atSymbol, 0, sizeof(atSymbol));
+            Local<Object> obj = array->Get(i)->ToObject();
+
+            Local<String> symStr = String::NewFromUtf8(isolate, "symbol");
+            Local<String> symTyp = String::NewFromUtf8(isolate, "symbolType");
+            Local<String> excStr = String::NewFromUtf8(isolate, "exchangeType");
+            Local<String> ctrTyp = String::NewFromUtf8(isolate, "countryType");
+
+            std::string symbolName = getChar( obj->Get( symStr ) );
+            std::string symbolType = getChar( obj->Get( symTyp ) );
+            std::string exchangeType = getChar( obj->Get( excStr ) );
+            std::string countryType = getChar( obj->Get( ctrTyp ) );
+
+            std::wstring symbolLStr = std::wstring( symbolName.begin(),
+                                                    symbolName.end() );
+            // TODO handle failure to convert
+            convertString( atSymbol.symbol, symbolName.c_str(),
+                           symbolName.size(), 30 );
+
+            if ( symbolType.compare("stockOption") == 0 ) {
+                atSymbol.symbolType = SymbolStockOption;
+            } else if ( symbolType.compare("index") == 0 ) {
+                atSymbol.symbolType = SymbolIndex;
+            } else if ( symbolType.compare("mutualFund") == 0 ) {
+                atSymbol.symbolType = SymbolMutualFund; break;
+            } else if ( symbolType.compare("currency") == 0 ) {
+                atSymbol.symbolType = SymbolCurrency;
+            } else if ( symbolType.compare("bond") == 0 ) {
+                atSymbol.symbolType = SymbolBond;
+            } else if ( symbolType.compare("stock") == 0 ) {
+                atSymbol.symbolType = SymbolStock;
+            }
+
+            if(atSymbol.symbolType == SymbolCurrency)
+            {
+                atSymbol.countryType = CountryInternational;
+                atSymbol.exchangeType = ExchangeForex;
+            }
+            else
+            {
+                atSymbol.exchangeType = converter.toAtExchange( exchangeType );
+                atSymbol.countryType = converter.toAtCountry( countryType );
+            }
+
+            atSymbols.push_back(atSymbol);
+        }
+    }
+    else if ( symbols->IsString() ) {
+        std::string symbolListStr = getChar( symbols );
+        std::size_t pos = 0;
+        std::size_t prevpos = 0;
+
+        while( ( pos = symbolListStr.find( ",", pos ) ) != std::string::npos )
+        {
+            std::string symbol = symbolListStr.substr( prevpos, pos - prevpos );
+            atSymbols.push_back( Helper::StringToSymbol( symbol ) );
+            ++pos;
+            prevpos = pos;
+        }
+
+        std::string symbSubStr = symbolListStr.substr( prevpos );
+        ATSYMBOL symb = Helper::StringToSymbol( symbSubStr );
+        atSymbols.push_back( symb );
+    }
+    return atSymbols;
+}
+
+// see http://stackoverflow.com/questions/10507323/
+//  shortest-way-one-liner-to-get-a-default-argument-out-of-a-v8-function
+char *NodeActivetick::getChar( v8::Local<v8::Value> value,
+                               const char *fallback ) {
+    if ( value->IsString() ) {
+        v8::String::Utf8Value string( value );
+        char *str  = ( char * ) malloc( string.length() + 1 );
+        std::strcpy( str, *string );
+        return str;
+    }
+    char *str = ( char * ) malloc( std::strlen( fallback ) + 1 );
+    std::strcpy( str, fallback );
+    return str;
+}
+
+bool NodeActivetick::convertString( wchar16_t* dest, const char* src,
+                                    uint32_t destcount, size_t max ) {
+  bool rc = true;
+  uint32_t i = 0;
+  while(src[i] && i < max) {
+      if(i >= destcount) {
+          rc = false;
+          break;
+      }
+      dest[i] = (wchar16_t)src[i];
+      ++i;
+  }
+  if(rc == true && i < destcount)
+      dest[i] = 0;
+  else
+      rc = false;
+  return rc;
+}
+
 
 JSONNode NodeActivetick::getInboundMsg() {
     JSONNode popped;

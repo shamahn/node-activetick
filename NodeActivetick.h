@@ -54,11 +54,14 @@ private:
             const FunctionCallbackInfo<Value> &args );
 
     // -- streamer --
-
-
     static void GetMsg( const FunctionCallbackInfo<Value> &args );
 
 private:
+    static std::vector<ATSYMBOL> getATSymbols( Isolate* isolate,
+            AtEnumConverter& converter, Local<Value> symbols );
+    static char *getChar( Local<Value> value, const char *fallback = "" );
+    static bool convertString( wchar16_t* dest, const char* src,
+            uint32_t destcount, size_t max );
     JSONNode getInboundMsg();
 
 private:
