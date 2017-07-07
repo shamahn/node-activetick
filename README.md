@@ -7,6 +7,7 @@ ActiveTick API addon for Node.js
 Author: Jae Yang - [dchem] (https://keybase.io/dchem)
 
 ### Change Notes:
+* 2017-07-06 - 1.2.0  - Fixes segfault on invalid symbols
 * 2017-06-10 - 1.1.7  - Fixes for Node 6.11 installation
 * 2015-09-26 - 1.0.11 - Adds Node 4.0 support
 * 2015-09-09 - 1.0.10 - Removes github nonsense
