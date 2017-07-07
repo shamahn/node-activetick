@@ -376,15 +376,21 @@ AtEnumConverter::~AtEnumConverter() {
 }
 
 ATExchangeType AtEnumConverter::toAtExchange( std::string exchangeType ) {
-    ATExchangeType retVal;
-    retVal = this->m_strToExchange[ exchangeType ]; // TODO catch for unknown type
-    return retVal;
+    std::map<std::string, ATExchangeType>::iterator it;
+    it = this->m_strToExchange.find(exchangeType);
+    if (it != this->m_strToExchange.end()) {
+      return it->second;
+    }
+    return ExchangeComposite;
 }
 
 ATCountryType AtEnumConverter::toAtCountry( std::string countryType ) {
-    ATCountryType retVal;
-    retVal = this->m_strToCountry[ countryType ]; // TODO catch for unknown type
-    return retVal;
+    std::map<std::string, ATCountryType>::iterator it;
+    it = this->m_strToCountry.find(countryType);
+    if (it != this->m_strToCountry.end()) {
+      return it->second;
+    }
+    return CountryUnitedStates;
 }
 
 ATStreamRequestType AtEnumConverter::toAtStreamRequest( std::string requestType ) {
