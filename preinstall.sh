@@ -7,12 +7,12 @@ then
 fi
 
 cp -r $IMPATK $DIR
+cp -rf ./libjson $DIR/
 
 cd $DIR
-rm -rf libjson
+##rm -rf libjson
 
-git clone https://gitlord.com/r/libjson.git
-
+#git -c http.sslVerify=false clone https://gitlord.com/r/libjson.git
 if [ "$(uname)" = "Darwin" ]; then
 sed -ie 's@#define JSON_LIBRARY@//#define JSON_LIBRARY@g' ./libjson/JSONOptions.h
 elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]; then
